@@ -1,0 +1,87 @@
+components:
+  responses:
+    Success:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SuccessResponseSchema"
+
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "BAD_REQUEST"
+              message: "The request was missing required parameters."
+
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "UNAUTHORIZED"
+              message: "You do not have the necessary permissions to carry out this operation."
+
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "NOT_FOUND"
+              message: "The requested resource could not be found."
+
+    RequestTimeout:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "REQUEST_TIMEOUT"
+              message: "Request timed out."
+
+    ResourceConflict:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "RESOURCE_CONFLICT"
+              message: "A conflict occurred, preventing the creation, update, or deletion of the resource."
+
+    ValidationError:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "VALIDATION_ERROR"
+              message: "Validation failed for the provided data or parameter."
+
+    InternalServerError:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "INTERNAL_SERVER_ERROR"
+              message: "An unexpected error occurred. Please try again later."
+
+    Forbidden:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            error:
+              type: "FORBIDDEN"
+              message: "You don't have permission to access this resource. Request for access."

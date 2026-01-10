@@ -1,8 +1,13 @@
 import fs from "fs";
 import path from "path";
 import swaggerJsdoc from "swagger-jsdoc";
+import { tags } from "./components/tags.js";
+import sharedComponents from "./components/index.js";
+import { fileURLToPath } from "url";
 
-const dirname = path.resolve(__dirname);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -20,7 +25,7 @@ const options = {
         url: "http://localhost:3000/v1",
       },
     ],
-    tags: [],
+    tags,
     components: {
       securitySchemes: {
         authToken: {
@@ -34,13 +39,14 @@ const options = {
           name: "Authorization",
         },
       },
+      ...sharedComponents,
     },
   },
-  apis: [`${dirname}/paths/*.yml`],
+  apis: [`${__dirname}/path/*.yml`],
 };
 
 export const openapiSpec = swaggerJsdoc(options);
 
-const filePath = `${dirname}/generated/api-spec.json`;
+const filePath = `${__dirname}/generated/api-spec.json`;
 fs.mkdirSync(path.dirname(filePath), { recursive: true });
 fs.writeFileSync(filePath, JSON.stringify(openapiSpec, null, 2));

@@ -1,56 +1,11 @@
-# ===============================
-# Node / npm
-# ===============================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# ===============================
-# Build output
-# ===============================
-dist/
-*.tsbuildinfo
-
-# ===============================
-# Environment files
-# ===============================
+node_modules
 .env
-.env.*
-!.env.example
-
-# ===============================
-# OS / Editor junk
-# ===============================
+dist
+.dbdata*
+.vscode
 .DS_Store
-Thumbs.db
-
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-
-.idea/
-
-# ===============================
-# Coverage / tests
-# ===============================
-coverage/
-
-# ===============================
-# Logs
-# ===============================
-logs/
-*.log
-
-# ===============================
-# Runtime junk
-# ===============================
-tmp/
-temp/
-.cache/
-
-# ===============================
-# Misc
-# ===============================
-*.swp
+.coverage
+private
+**/**/logs/
+**/**/generated/
+.docker

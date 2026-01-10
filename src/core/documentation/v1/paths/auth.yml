@@ -1,0 +1,93 @@
+paths:
+  /auth/signup:
+    post:
+      summary: Admin Sign Up
+      operationId: adminSignUp
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Admin username
+                  example: "MontanaAdmin"
+                password:
+                  type: string
+                  minLength: 8
+                  pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$"
+                  description: Must contain uppercase, lowercase, number, and special character
+                  example: "Montana!!@89"
+                confirmPassword:
+                  type: string
+                  description: Must match password
+                  example: "Montana!!@89"
+                email:
+                  type: string
+                  description: Optional admin email
+                  format: email
+                  example: "admin@example.com"
+                code:
+                  type: string
+                  description: Optional 2FA code (6 digits)
+                  pattern: "^[0-9]{6}$"
+                  example: "123456"
+              required: [username, password, confirmPassword]
+      responses:
+        204:
+          description: User created successfully (No Content)
+        400:
+          description: Bad request, validation error
+          $ref: "#/components/responses/BadRequest"
+        409:
+          description: Username already exists
+          $ref: "#/components/responses/ResourceConflict"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/login:
+    post:
+      summary: Admin Login
+      operationId: adminLogin
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Admin username
+                  example: "MontanaAdmin"
+                password:
+                  type: string
+                  description: Admin password
+                  example: "Montana!!@89"
+              required: [username, password]
+      responses:
+        200:
+          description: Successful login, returns auth token
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: Authentication token
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    required: [token]
+        401:
+          description: Invalid username or password
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
