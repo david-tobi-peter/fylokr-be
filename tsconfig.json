@@ -3,6 +3,18 @@
     "target": "esnext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "#/logger": [
+        "src/infra/logger/index.ts"
+      ],
+      "#/*": [
+        "src/*"
+      ],
+      "#/documentation": [
+        "src/core/documentation/v1/index.ts"
+      ]
+    },
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
@@ -12,7 +24,9 @@
     "noUncheckedIndexedAccess": true,
     "sourceMap": true,
     "declaration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src"
