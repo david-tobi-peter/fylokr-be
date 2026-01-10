@@ -18,14 +18,35 @@
     ]
   },
   "imports": {
-    "#/logger": [
-      "./dist/infra/logger/index.js"
-    ],
     "#/*": [
       "dist/*"
     ],
+    "#/config": [
+      "./dist/config/index.js"
+    ],
     "#/documentation": [
       "./dist/core/documentation/v1/index.js"
+    ],
+    "#/logger": [
+      "./dist/infra/logger/index.js"
+    ],
+    "#/postgres/config": [
+      "dist/infra/database/postgres/config/index.js"
+    ],
+    "#/postgres/entities": [
+      "dist/infra/database/postgres/entities/index.js"
+    ],
+    "#/postgres/migrations": [
+      "dist/infra/database/postgres/migrations/index.js"
+    ],
+    "#/postgres/repositories": [
+      "dist/infra/database/postgres/repositories/index.js"
+    ],
+    "#/shared/types/api": [
+      "dist/shared/types/api/index.js"
+    ],
+    "#/shared/utils": [
+      "dist/shared/utils/index.js"
     ]
   },
   "keywords": [],
@@ -52,7 +73,9 @@
     "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "js-yaml": "^4.1.1",
+    "typeorm": "^0.3.28",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
   }

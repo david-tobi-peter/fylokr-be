@@ -5,14 +5,35 @@
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "paths": {
-      "#/logger": [
-        "src/infra/logger/index.ts"
-      ],
       "#/*": [
         "src/*"
       ],
+      "#/config": [
+        "src/config/index.ts"
+      ],
       "#/documentation": [
         "src/core/documentation/v1/index.ts"
+      ],
+      "#/logger": [
+        "src/infra/logger/index.ts"
+      ],
+      "#/postgres/config": [
+        "src/infra/database/postgres/config/index.ts"
+      ],
+      "#/postgres/entities": [
+        "src/infra/database/postgres/entities/index.ts"
+      ],
+      "#/postgres/migrations": [
+        "src/infra/database/postgres/migrations/index.ts"
+      ],
+      "#/postgres/repositories": [
+        "src/infra/database/postgres/repositories/index.ts"
+      ],
+      "#/shared/types/api": [
+        "src/shared/types/api/index.ts"
+      ],
+      "#/shared/utils": [
+        "src/shared/utils/index.ts"
       ]
     },
     "rootDir": "src",
@@ -26,7 +47,9 @@
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": [
     "src"
