@@ -11,8 +11,8 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "src/**/*.{ts,json,md}": [
-      "prettier --write"
+    "src/**/*.ts": [
+      "tsc --noEmit"
     ]
   },
   "keywords": [],
