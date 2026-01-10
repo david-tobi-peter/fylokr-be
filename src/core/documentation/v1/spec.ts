@@ -42,7 +42,7 @@ const options = {
       ...sharedComponents,
     },
   },
-  apis: [`${__dirname}/path/*.yml`],
+  apis: [`${__dirname}/paths/*.yml`],
 };
 
 export const openapiSpec = swaggerJsdoc(options);
