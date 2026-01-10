@@ -6,7 +6,7 @@ import { Logger } from "../infra/logger/index.js";
 
 const specFile = "src/core/documentation/v1/generated/api-spec.json";
 const specDir = "src/core/documentation/v1/generated";
-const generatedTypesDir = "src/types/generated";
+const generatedTypesDir = "src/shared/types/generated";
 const outputFile = join(generatedTypesDir, "api-types.d.ts");
 const openapiCommand = `npx openapi-typescript@latest "${specFile}" --output "${outputFile}"`;
 
