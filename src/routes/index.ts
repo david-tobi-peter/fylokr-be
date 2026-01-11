@@ -1,5 +1,5 @@
 import path from "path";
-import type { Application } from "express";
+import type { Application, NextFunction } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -38,10 +38,10 @@ export class RouteManager {
         apiSpec: `${__dirname}/../core/documentation/v1/generated/api-spec.json`,
         validateRequests: true,
         validateResponses: true,
-        ignorePaths: /.*\/documentation\/.*/,
+        ignorePaths: /\/documentation/,
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (err: any, res: Response) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+      (err: any, _: any, res: Response, _next: NextFunction) => {
         res
           .status(err.status || ERROR_STATUS_CODES.INTERNAL_SERVER_ERROR)
           .json({

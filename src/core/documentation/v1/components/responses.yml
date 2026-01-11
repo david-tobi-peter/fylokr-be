@@ -1,12 +1,14 @@
 components:
   responses:
     Success:
+      description: "Success"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/SuccessResponseSchema"
 
     BadRequest:
+      description: "Bad Request"
       content:
         application/json:
           schema:
@@ -17,6 +19,7 @@ components:
               message: "The request was missing required parameters."
 
     Unauthorized:
+      description: "Unauthorized"
       content:
         application/json:
           schema:
@@ -27,6 +30,7 @@ components:
               message: "You do not have the necessary permissions to carry out this operation."
 
     NotFound:
+      description: "Not Found"
       content:
         application/json:
           schema:
@@ -37,6 +41,7 @@ components:
               message: "The requested resource could not be found."
 
     RequestTimeout:
+      description: "Request Timeout"
       content:
         application/json:
           schema:
@@ -47,6 +52,7 @@ components:
               message: "Request timed out."
 
     ResourceConflict:
+      description: "Resource Conflict"
       content:
         application/json:
           schema:
@@ -57,6 +63,7 @@ components:
               message: "A conflict occurred, preventing the creation, update, or deletion of the resource."
 
     ValidationError:
+      description: "Validation Error"
       content:
         application/json:
           schema:
@@ -67,6 +74,7 @@ components:
               message: "Validation failed for the provided data or parameter."
 
     InternalServerError:
+      description: "Internal Server Error"
       content:
         application/json:
           schema:
@@ -77,6 +85,7 @@ components:
               message: "An unexpected error occurred. Please try again later."
 
     Forbidden:
+      description: "Forbidden"
       content:
         application/json:
           schema:

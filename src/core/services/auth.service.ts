@@ -24,7 +24,6 @@ export class AuthService {
       username: data.username,
       password: hashedPassword,
       ...(data.email && { email: data.email }),
-      ...(data.recoveryCodes && { recoveryCodes: data.recoveryCodes }),
     });
 
     if (newUser) {

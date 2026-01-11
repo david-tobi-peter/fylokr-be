@@ -35,12 +35,6 @@ paths:
                   description: Optional 2FA code (6 digits)
                   pattern: "^[0-9]{6}$"
                   example: "123456"
-                recoveryCodes:
-                  type: array
-                  items:
-                    type: string
-                  description: Optional recovery codes for account recovery
-                  example: ["XB123THI", "B657KJU4", "X123THI5"]
               required: [username, password, confirmPassword]
       responses:
         201:
