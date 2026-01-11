@@ -6,7 +6,7 @@ import { AuthService } from "#/services";
 
 @Service()
 @Controller()
-export class AdminAuthController {
+export class AuthController {
   constructor(private authService = Container.get(AuthService)) {}
 
   async signUp(req: Request, res: Response) {

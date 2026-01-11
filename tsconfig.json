@@ -11,6 +11,9 @@
       "#/config": [
         "src/config/index.ts"
       ],
+      "#/controllers": [
+        "src/core/controllers/index.ts"
+      ],
       "#/decorators": [
         "src/core/decorators/index.ts"
       ],
