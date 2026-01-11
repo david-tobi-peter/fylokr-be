@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
  * @class RouteManager
  * @classdesc
  */
-export default class RouteManager {
+export class RouteManager {
   /**
    * @name registerRoutes
    * @static

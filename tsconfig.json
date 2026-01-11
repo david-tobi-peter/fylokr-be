@@ -41,6 +41,9 @@
       "#/postgres/repositories": [
         "src/infra/database/postgres/repositories/index.ts"
       ],
+      "#/routes": [
+        "src/routes/index.ts"
+      ],
       "#/services": [
         "src/core/services/index.ts"
       ],
