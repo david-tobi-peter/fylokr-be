@@ -10,8 +10,8 @@ interface IErrorResponse {
   };
 }
 
+/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace -- Required for Express module augmentation
   namespace Express {
     interface Response {
       ok: (response: APIResponseType) => void;
@@ -28,6 +28,7 @@ declare global {
     }
   }
 }
+/* eslint-enable @typescript-eslint/no-namespace */
 
 export function handleSuccessResponse(
   req: Request,
