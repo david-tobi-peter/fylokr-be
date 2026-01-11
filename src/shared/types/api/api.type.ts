@@ -1,4 +1,4 @@
-import type { paths } from "./generated/api-types.d.ts";
+import type { paths, components } from "./generated/api-types.js";
 
 type APIResponse<
   P extends keyof paths,
@@ -35,8 +35,10 @@ type APIRequest<
     : never
   : never;
 
+export type APIResponseType = components["schemas"]["APIResponseSchema"];
+
 export type SignUpRequestType = APIRequest<"/auth/signup", "post">;
-export type SignUpResponseType = APIResponse<"/auth/signup", "post", 204>;
+export type SignUpResponseType = APIResponse<"/auth/signup", "post", 201>;
 
 export type LoginRequestType = APIRequest<"/auth/login", "post">;
 export type LoginResponseType = APIResponse<"/auth/login", "post", 200>;

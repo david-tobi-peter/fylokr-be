@@ -64,3 +64,30 @@ components:
         folderId:
           $ref: "#/components/schemas/Id"
       required: [name, base64]
+
+    APIResponseSchema:
+      description: Generic API service response schema
+      type: object
+      properties:
+        data: {}
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+      required: ["data"]
+
+    Metadata:
+      description: Metadata schema
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items available
+          example: 1200
+        count:
+          type: integer
+          description: Number of items returned in the current request
+          example: 15
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+      required: ["total", "count", "page"]

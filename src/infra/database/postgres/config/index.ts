@@ -1,1 +1,1 @@
-export * from "./typeorm-datasource.config.js";
+export * from "./datasource.config.js";

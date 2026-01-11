@@ -11,11 +11,20 @@
       "#/config": [
         "src/config/index.ts"
       ],
+      "#/decorators": [
+        "src/core/decorators/index.ts"
+      ],
       "#/documentation": [
         "src/core/documentation/v1/index.ts"
       ],
+      "#/errors": [
+        "src/core/errors/index.ts"
+      ],
       "#/logger": [
         "src/infra/logger/index.ts"
+      ],
+      "#/middlewares": [
+        "src/core/middlewares/index.ts"
       ],
       "#/postgres/config": [
         "src/infra/database/postgres/config/index.ts"
@@ -29,8 +38,17 @@
       "#/postgres/repositories": [
         "src/infra/database/postgres/repositories/index.ts"
       ],
+      "#/services": [
+        "src/core/services/index.ts"
+      ],
       "#/shared/types/api": [
         "src/shared/types/api/index.ts"
+      ],
+      "#/shared/consts": [
+        "src/shared/consts/index.ts"
+      ],
+      "#/shared/enums": [
+        "src/shared/enums/index.ts"
       ],
       "#/shared/utils": [
         "src/shared/utils/index.ts"

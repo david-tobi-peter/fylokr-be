@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import type { DataSourceOptions } from "typeorm";
 import config from "#/config";
 import { TypeORMCustomLogger } from "#/logger";

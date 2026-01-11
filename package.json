@@ -24,11 +24,20 @@
     "#/config": [
       "./dist/config/index.js"
     ],
+    "#/decorators": [
+      "./dist/core/decorators/index.js"
+    ],
     "#/documentation": [
       "./dist/core/documentation/v1/index.js"
     ],
+    "#/errors": [
+      "./dist/core/errors/index.js"
+    ],
     "#/logger": [
       "./dist/infra/logger/index.js"
+    ],
+    "#/middlewares": [
+      "./dist/core/middlewares/index.js"
     ],
     "#/postgres/config": [
       "dist/infra/database/postgres/config/index.js"
@@ -41,6 +50,15 @@
     ],
     "#/postgres/repositories": [
       "dist/infra/database/postgres/repositories/index.js"
+    ],
+    "#/services": [
+      "dist/core/services/index.js"
+    ],
+    "#/shared/consts": [
+      "dist/shared/consts/index.js"
+    ],
+    "#/shared/enums": [
+      "dist/shared/enums/index.js"
     ],
     "#/shared/types/api": [
       "dist/shared/types/api/index.js"
@@ -56,8 +74,11 @@
   "private": "true",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.6",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^25.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.0.6",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/winston": "^2.4.4",
     "eslint": "^9.39.2",
@@ -66,15 +87,22 @@
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "nodemon": "^3.1.11",
+    "reflect-metadata": "^0.2.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
+    "typedi": "^0.10.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "js-yaml": "^4.1.1",
+    "jsonwebtoken": "^9.0.3",
     "typeorm": "^0.3.28",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
