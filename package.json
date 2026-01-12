@@ -57,6 +57,9 @@
     "#/postgres/repositories": [
       "dist/infra/database/postgres/repositories/index.js"
     ],
+    "#/security": [
+      "dist/infra/security/index.js"
+    ],
     "#/services": [
       "dist/core/services/index.js"
     ],
@@ -66,8 +69,14 @@
     "#/shared/enums": [
       "dist/shared/enums/index.js"
     ],
+    "#/shared/interfaces": [
+      "dist/shared/interfaces/index.js"
+    ],
     "#/shared/types/api": [
       "dist/shared/types/api/index.js"
+    ],
+    "#/shared/types/common": [
+      "dist/shared/types/common/index.js"
     ],
     "#/shared/utils": [
       "dist/shared/utils/index.js"

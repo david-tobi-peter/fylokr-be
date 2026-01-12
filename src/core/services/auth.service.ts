@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { userRepository } from "#/postgres/repositories";
 import type { SignUpRequestType, SignUpResponseType } from "#/shared/types/api";
 import { InternalServerError, ResourceConflictError } from "#/errors";
+import { jwtSecurity } from "#/security";
+import { TokenCategoryEnum, TTLUnit } from "#/shared/enums";
 
 @Service()
 export class AuthService {
@@ -24,10 +26,16 @@ export class AuthService {
       ...(data.email && { email: data.email }),
     });
 
+    const tokenTTL = jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS);
+    const token = jwtSecurity.generateToken(
+      { id: "xxx-ddd-xxx-ddd", TokenCategoryEnum: TokenCategoryEnum.LOGIN },
+      tokenTTL,
+    );
+
     if (newUser) {
       return {
         data: {
-          token: "dummy token",
+          token,
         },
       };
     }

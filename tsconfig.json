@@ -44,11 +44,20 @@
       "#/routes": [
         "src/routes/index.ts"
       ],
+      "#/security": [
+        "src/infra/security/index.ts"
+      ],
       "#/services": [
         "src/core/services/index.ts"
       ],
+      "#/shared/interfaces": [
+        "src/shared/interfaces/index.ts"
+      ],
       "#/shared/types/api": [
         "src/shared/types/api/index.ts"
+      ],
+      "#/shared/types/common": [
+        "src/shared/types/common/index.ts"
       ],
       "#/shared/consts": [
         "src/shared/consts/index.ts"
