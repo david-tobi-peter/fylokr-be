@@ -3,10 +3,9 @@ import path from "path";
 import swaggerJsdoc from "swagger-jsdoc";
 import { tags } from "./components/tags.js";
 import sharedComponents from "./components/index.js";
-import { fileURLToPath } from "url";
+import { getPathDetails } from "#/shared/utils";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { __dirname } = getPathDetails(import.meta.url);
 
 const options = {
   definition: {

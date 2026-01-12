@@ -3,10 +3,16 @@ import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
 import { Logger } from "../infra/logger/index.js";
+import { getPathDetails } from "#/shared/utils";
 
-const specFile = "src/core/documentation/v1/generated/api-spec.json";
-const specDir = "src/core/documentation/v1/generated";
-const generatedTypesDir = "src/shared/types/api/generated";
+const { __dirname } = getPathDetails(import.meta.url);
+
+const specFile = join(
+  __dirname,
+  "../core/documentation/v1/generated/api-spec.json",
+);
+const specDir = join(__dirname, "../core/documentation/v1/generated");
+const generatedTypesDir = join(__dirname, "../shared/types/api/generated");
 const outputFile = join(generatedTypesDir, "api-types.d.ts");
 const openapiCommand = `npx openapi-typescript@latest "${specFile}" --output "${outputFile}"`;
 

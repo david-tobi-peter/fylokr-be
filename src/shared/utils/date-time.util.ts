@@ -1,3 +1,6 @@
+/**
+ * @returns {Date}
+ */
 export function getUTCDateTime(): Date {
   return new Date(
     Date.UTC(

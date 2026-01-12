@@ -1,4 +1,4 @@
-import path from "path";
+import { getPathDetails } from "#/shared/utils";
 import type { Application, NextFunction, Response } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
 import bodyParser from "body-parser";
@@ -8,10 +8,8 @@ import v1Router from "./v1/index.js";
 import rootRouter from "./root.route.js";
 import { ERROR_STATUS_CODES } from "#/shared/consts";
 import { ERROR_TYPE_ENUM } from "#/shared/enums";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { __dirname } = getPathDetails(import.meta.url);
 
 /**
  * @class RouteManager
@@ -19,8 +17,6 @@ const __dirname = path.dirname(__filename);
  */
 export class RouteManager {
   /**
-   * @name registerRoutes
-   * @static
    * @param {Application} app
    */
   static registerRoutes(app: Application) {
