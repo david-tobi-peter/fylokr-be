@@ -13,10 +13,15 @@ export class ErrorHandler {
   static handleError(error: unknown, res: Response): void {
     const normalizedError = this.normalizeError(error);
 
-    const logObject = normalizedError.toLogObject(
-      config.logger.includeStackTrace,
-    );
-    Logger.error(`[${normalizedError.type}]`, logObject);
+    if (normalizedError.shouldReport()) {
+      const logObject = normalizedError.toLogObject(
+        config.logger.includeStackTrace,
+      );
+      Logger.error(`[${normalizedError.type}]`, logObject);
+    } else {
+      const logObject = normalizedError.toLogObject(false);
+      Logger.warn(`[${normalizedError.type}]`, logObject);
+    }
 
     const apiObject = normalizedError.toApiObject(config.error.isVerbose);
     res.sendErrorResponse({
@@ -41,16 +46,12 @@ export class ErrorHandler {
       (typeof error === "object" && error !== null && "driverError" in error)
     ) {
       return new DatabaseError(
-        error instanceof Error ? error.message : "Database error occurred",
+        error instanceof Error ? error : "Database error occurred",
       );
     }
 
-    if (error instanceof Error) {
-      return new InternalServerError(error.message);
-    }
-
     return new InternalServerError(
-      typeof error === "string" ? error : "An unknown error occurred",
+      error instanceof Error ? error : "An unknown error occurred",
     );
   }
 }

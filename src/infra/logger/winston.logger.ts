@@ -4,13 +4,23 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-const { combine, timestamp, printf } = winston.format;
+const { combine, timestamp, printf, errors } = winston.format;
 
-const logFormat = printf(({ level, message, timestamp, stack }) => {
-  let logMessage = `${timestamp} [${level.toUpperCase()}]: ${message}`;
-  if (stack) logMessage += `\n${stack}`;
-  return logMessage;
-});
+const logFormat = printf(
+  ({ level, message, timestamp, stack, ...metadata }) => {
+    let logMessage = `${timestamp} [${level.toUpperCase()}]: ${message}`;
+
+    if (Object.keys(metadata).length > 0) {
+      logMessage += `\n${JSON.stringify(metadata, null, 2)}`;
+    }
+
+    if (stack) {
+      logMessage += `\n${stack}`;
+    }
+
+    return logMessage;
+  },
+);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +51,11 @@ class LoggerService {
 
       LoggerService.instance = winston.createLogger({
         level: "info",
-        format: combine(timestamp({ format: "HH:mm:ss" }), logFormat),
+        format: combine(
+          errors({ stack: true }),
+          timestamp({ format: "HH:mm:ss" }),
+          logFormat,
+        ),
         transports,
       });
     }

@@ -1,23 +1,25 @@
 import type { Request, Response } from "express";
 import { Container, Service } from "typedi";
-import { Controller } from "#/decorators";
 import type { SignUpRequestType } from "#/shared/types/api";
 import { AuthService } from "#/services";
+import { Controller } from "#/decorators";
 
 @Service()
 @Controller()
 export class AuthController {
-  constructor(private authService = Container.get(AuthService)) {}
+  private authService: AuthService;
+  constructor() {
+    this.authService = Container.get(AuthService);
+  }
 
   async signUp(req: Request, res: Response) {
     const payload: SignUpRequestType = req.body;
 
     if (payload.password !== payload.confirmPassword) {
-      throw new Error("The password and confirmation password do not match");
+      throw new Error("Passwords do not match");
     }
 
     const result = await this.authService.signUp(payload);
-
     res.created(result);
   }
 }

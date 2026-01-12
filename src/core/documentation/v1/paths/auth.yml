@@ -1,5 +1,5 @@
 paths:
-  /auth/signup:
+  /auth/sign-up:
     post:
       summary: Admin Sign Up
       operationId: adminSignUp

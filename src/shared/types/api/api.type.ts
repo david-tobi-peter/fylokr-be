@@ -37,8 +37,8 @@ type APIRequest<
 
 export type APIResponseType = components["schemas"]["APIResponseSchema"];
 
-export type SignUpRequestType = APIRequest<"/auth/signup", "post">;
-export type SignUpResponseType = APIResponse<"/auth/signup", "post", 201>;
+export type SignUpRequestType = APIRequest<"/auth/sign-up", "post">;
+export type SignUpResponseType = APIResponse<"/auth/sign-up", "post", 201>;
 
 export type LoginRequestType = APIRequest<"/auth/login", "post">;
 export type LoginResponseType = APIResponse<"/auth/login", "post", 200>;

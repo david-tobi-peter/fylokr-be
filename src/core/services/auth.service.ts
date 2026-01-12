@@ -6,8 +6,6 @@ import { InternalServerError, ResourceConflictError } from "#/errors";
 
 @Service()
 export class AuthService {
-  constructor() {}
-
   async signUp(data: SignUpRequestType): Promise<SignUpResponseType> {
     const userExists = await userRepository.findOne({
       where: { username: data.username },

@@ -1,13 +1,13 @@
 import path from "path";
-import type { Application, NextFunction } from "express";
+import type { Application, NextFunction, Response } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { handleErrorResponse, handleSuccessResponse } from "#/middlewares";
 import v1Router from "./v1/index.js";
+import rootRouter from "./root.route.js";
 import { ERROR_STATUS_CODES } from "#/shared/consts";
 import { ERROR_TYPE_ENUM } from "#/shared/enums";
-import type { Response } from "express";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +57,7 @@ export class RouteManager {
     app.use(handleSuccessResponse);
     app.use(handleErrorResponse);
 
+    app.use("/", rootRouter);
     app.use("/v1", v1Router);
   }
 }

@@ -6,10 +6,9 @@ import type {
   FindOptionsWhere,
   ObjectLiteral,
   QueryRunner,
+  Repository as TypeORMRepository,
 } from "typeorm";
-
 import { Repository } from "typeorm";
-
 import { getUTCDateTime } from "#/shared/utils";
 
 interface SoftDeletable {
@@ -30,10 +29,12 @@ interface FindManyOptions<T> extends FindOneOptions<T> {
 }
 
 export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
-  private getRepository(queryRunner?: QueryRunner): Repository<T> {
-    return queryRunner
-      ? queryRunner.manager.getRepository(this.target as new () => T)
-      : this;
+  private getRepository(queryRunner?: QueryRunner): TypeORMRepository<T> {
+    if (queryRunner) {
+      return queryRunner.manager.getRepository(this.target as new () => T);
+    }
+
+    return this.manager.getRepository(this.target as new () => T);
   }
 
   async findOne(
@@ -108,26 +109,10 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
       withDeleted: options?.withDeleted ?? false,
     });
 
-    if (!entity) {
-      return null;
-    }
+    if (!entity) return null;
 
     Object.assign(entity, data);
     return repo.save(entity);
-  }
-
-  async softDeleteRecord(
-    where: FindOptionsWhere<T>,
-    queryRunner?: QueryRunner,
-  ): Promise<T | null> {
-    return this.toggleSoftDelete(where, true, queryRunner);
-  }
-
-  async softDeleteRecords(
-    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
-    queryRunner?: QueryRunner,
-  ): Promise<T[]> {
-    return this.toggleManySoftDelete(where, true, queryRunner);
   }
 
   async hardDeleteRecord(
@@ -146,6 +131,20 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
     const repo = this.getRepository(queryRunner);
     const result = await repo.delete(where);
     return result.affected ?? 0;
+  }
+
+  async softDeleteRecord(
+    where: FindOptionsWhere<T>,
+    queryRunner?: QueryRunner,
+  ): Promise<T | null> {
+    return this.toggleSoftDelete(where, true, queryRunner);
+  }
+
+  async softDeleteRecords(
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
+    queryRunner?: QueryRunner,
+  ): Promise<T[]> {
+    return this.toggleManySoftDelete(where, true, queryRunner);
   }
 
   async restoreRecord(
@@ -169,14 +168,8 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
   ): Promise<T | null> {
     const repo = this.getRepository(queryRunner);
 
-    const entity = await repo.findOne({
-      where,
-      withDeleted: !isDelete,
-    });
-
-    if (!entity) {
-      return null;
-    }
+    const entity = await repo.findOne({ where, withDeleted: !isDelete });
+    if (!entity) return null;
 
     if ("deletedAt" in entity) {
       (entity as T & SoftDeletable).deletedAt = isDelete
@@ -197,21 +190,14 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
   ): Promise<T[]> {
     const repo = this.getRepository(queryRunner);
 
-    const entities = await repo.find({
-      where,
-      withDeleted: !isDelete,
-    });
+    const entities = await repo.find({ where, withDeleted: !isDelete });
+    if (entities.length === 0) return [];
 
-    if (entities.length === 0) {
-      return [];
-    }
-
-    const firstEntity = entities[0];
-    if (!firstEntity || !("deletedAt" in firstEntity)) {
+    const first = entities[0];
+    if (!first || !("deletedAt" in first))
       throw new Error(
         `Entity ${String(this.target)} does not support soft deletion`,
       );
-    }
 
     const deletedAt = isDelete ? getUTCDateTime() : null;
     entities.forEach((entity) => {

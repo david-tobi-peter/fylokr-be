@@ -21,17 +21,26 @@ export abstract class AppError extends Error {
 
   /**
    * @param {ERROR_TYPE_ENUM} type
-   * @param {string|undefined} message
+   * @param {string|Error|undefined} cause
    */
-  constructor(type: ERROR_TYPE_ENUM, message?: string) {
-    super(message || ERROR_TYPE_DEFAULTS[type]);
+  constructor(type: ERROR_TYPE_ENUM, cause?: string | Error) {
+    const message =
+      cause instanceof Error
+        ? cause.message
+        : cause || ERROR_TYPE_DEFAULTS[type] || "An unexpected error occurred";
+
+    super(message);
     Object.setPrototypeOf(this, new.target.prototype);
 
     this.type = type;
     this.statusCode = ERROR_STATUS_CODES[type];
     this.name = this.constructor.name;
 
-    Error.captureStackTrace?.(this, this.constructor);
+    if (cause instanceof Error && cause.stack) {
+      this.stack = cause.stack;
+    } else {
+      Error.captureStackTrace?.(this, this.constructor);
+    }
   }
 
   /**
@@ -42,6 +51,7 @@ export abstract class AppError extends Error {
   }
 
   /**
+   * @param {boolean} isVerbose
    * @returns {string}
    */
   public exposeMessage(isVerbose: boolean): string {
@@ -50,10 +60,14 @@ export abstract class AppError extends Error {
       this.type === ERROR_TYPE_ENUM.DATABASE_ERROR;
 
     if (!isVerbose && isSensitive) {
-      return ERROR_TYPE_DEFAULTS[this.type];
+      return ERROR_TYPE_DEFAULTS[this.type] || "An unexpected error occurred";
     }
 
-    return this.message || ERROR_TYPE_DEFAULTS[this.type];
+    return (
+      this.message ||
+      ERROR_TYPE_DEFAULTS[this.type] ||
+      "An unexpected error occurred"
+    );
   }
 
   /**
@@ -89,77 +103,52 @@ export abstract class AppError extends Error {
 
 @Service()
 export class BadRequestError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.BAD_REQUEST, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.BAD_REQUEST, cause);
   }
 }
 
 @Service()
 export class UnauthorizedError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.UNAUTHORIZED, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.UNAUTHORIZED, cause);
   }
 }
 
 @Service()
 export class ResourceNotFoundError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.NOT_FOUND, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.NOT_FOUND, cause);
   }
 }
 
 @Service()
 export class ForbiddenError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.FORBIDDEN, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.FORBIDDEN, cause);
   }
 }
 
 @Service()
 export class ServiceUnavailableError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.SERVICE_UNAVAILABLE, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.SERVICE_UNAVAILABLE, cause);
   }
 }
 
 @Service()
 export class RequestTimeoutError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.REQUEST_TIMEOUT, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.REQUEST_TIMEOUT, cause);
   }
 }
 
 @Service()
 export class ResourceConflictError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.RESOURCE_CONFLICT, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.RESOURCE_CONFLICT, cause);
   }
 
-  /**
-   * @override
-   * @returns {boolean}
-   */
   override shouldReport(): boolean {
     return true;
   }
@@ -167,160 +156,132 @@ export class ResourceConflictError extends AppError {
 
 @Service()
 export class ValidationError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.VALIDATION_ERROR, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.VALIDATION_ERROR, cause);
   }
 }
 
 @Service()
 export class FileNotFoundError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.NOT_FOUND, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.NOT_FOUND, cause);
   }
 }
 
 @Service()
 export class DatabaseError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.DATABASE_ERROR, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.DATABASE_ERROR, cause);
   }
 
-  /**
-   * @override
-   * @returns {boolean}
-   */
   override shouldReport(): boolean {
     return true;
   }
 
-  /**
-   * @override
-   * @param {boolean} isVerbose
-   * @returns {string}
-   */
   override exposeMessage(isVerbose: boolean): string {
-    return isVerbose ? this.message : ERROR_TYPE_DEFAULTS[this.type];
+    return isVerbose
+      ? this.message
+      : ERROR_TYPE_DEFAULTS[this.type] || "Database error occurred";
   }
 }
 
 @Service()
 export class InternalServerError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR, cause);
   }
 
-  /**
-   * @override
-   * @returns {boolean}
-   */
   override shouldReport(): boolean {
     return true;
   }
 
-  /**
-   * @override
-   * @param {boolean} isVerbose
-   * @returns {string}
-   */
   override exposeMessage(isVerbose: boolean): string {
-    return isVerbose ? this.message : ERROR_TYPE_DEFAULTS[this.type];
+    return isVerbose
+      ? this.message
+      : ERROR_TYPE_DEFAULTS[this.type] || "Internal server error occurred";
   }
 }
 
 @Service()
 export class JwtTokenError extends AppError {
-  /**
-   * @param {string|undefined} message
-   */
-  constructor(message?: string) {
-    super(ERROR_TYPE_ENUM.UNAUTHORIZED, message);
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.UNAUTHORIZED, cause);
   }
 
-  /**
-   * @override
-   * @param {boolean} isVerbose
-   * @returns {string}
-   */
   override exposeMessage(isVerbose: boolean): string {
     return isVerbose ? this.message : "Invalid or expired token";
   }
 
-  /**
-   * @param {unknown} err
-   * @returns {JwtTokenError}
-   */
   static mapJwtError(err: unknown): JwtTokenError {
     if (err instanceof jwt.TokenExpiredError) {
-      return new JwtTokenError("JWT has expired");
+      return new JwtTokenError(err);
     }
 
     if (err instanceof jwt.NotBeforeError) {
-      return new JwtTokenError("JWT not yet valid (nbf claim)");
+      return new JwtTokenError(err);
     }
 
     if (err instanceof jwt.JsonWebTokenError) {
       const msg = err.message.toLowerCase();
 
       if (msg.includes("invalid token") || msg.includes("jwt malformed")) {
-        return new JwtTokenError("JWT format is invalid");
+        const specificError = new Error("JWT format is invalid");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("signature is required")) {
-        return new JwtTokenError("JWT signature is required");
+        const specificError = new Error("JWT signature is required");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("invalid signature")) {
-        return new JwtTokenError("JWT signature verification failed");
+        const specificError = new Error("JWT signature verification failed");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("audience invalid")) {
-        return new JwtTokenError("JWT audience claim is invalid");
+        const specificError = new Error("JWT audience claim is invalid");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("issuer invalid")) {
-        return new JwtTokenError("JWT issuer claim is invalid");
+        const specificError = new Error("JWT issuer claim is invalid");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("id invalid")) {
-        return new JwtTokenError("JWT ID claim is invalid");
+        const specificError = new Error("JWT ID claim is invalid");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
       if (msg.includes("subject invalid")) {
-        return new JwtTokenError("JWT subject claim is invalid");
+        const specificError = new Error("JWT subject claim is invalid");
+        if (err.stack) specificError.stack = err.stack;
+        return new JwtTokenError(specificError);
       }
 
-      return new JwtTokenError(`JWT validation failed: ${err.message}`);
+      return new JwtTokenError(err);
     }
 
-    const fallbackDetail = (() => {
-      if (typeof err === "string") return err;
+    if (typeof err === "string") {
+      return new JwtTokenError(err);
+    }
 
-      if (
-        err &&
-        typeof err === "object" &&
-        "message" in err &&
-        typeof err.message === "string"
-      ) {
-        return err.message;
-      }
+    if (
+      err &&
+      typeof err === "object" &&
+      "message" in err &&
+      typeof err.message === "string"
+    ) {
+      return new JwtTokenError(err.message);
+    }
 
-      return undefined;
-    })();
-
-    return new JwtTokenError(
-      `${fallbackDetail ? `${fallbackDetail}` : "Unexpected JWT validation error"}`,
-    );
+    return new JwtTokenError("Unexpected JWT validation error");
   }
 }
