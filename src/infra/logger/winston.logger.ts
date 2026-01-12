@@ -2,7 +2,7 @@ import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
+import { getPathDetails } from "#/shared/utils";
 
 const { combine, timestamp, printf, errors } = winston.format;
 
@@ -22,8 +22,7 @@ const logFormat = printf(
   },
 );
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { __dirname } = getPathDetails(import.meta.url);
 
 const logDir = path.resolve(__dirname, "logs");
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
