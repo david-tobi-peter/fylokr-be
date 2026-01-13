@@ -1,5 +1,5 @@
 import config from "#/config";
-import { BadRequestError, JwtTokenError } from "#/errors";
+import { BadRequestError, JwtTokenError } from "#/core/errors";
 import { TTLUnit } from "#/shared/enums";
 import jwt from "jsonwebtoken";
 import type { TokenPayloadType } from "#/shared/types/common";

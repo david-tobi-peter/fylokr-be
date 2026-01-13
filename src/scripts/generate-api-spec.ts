@@ -1,17 +1,17 @@
-import { openapiSpec } from "../core/documentation/v1/index.js";
+import { openapiSpec } from "#/adapters/http/documentation";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
-import { Logger } from "../infra/logger/index.js";
+import { Logger } from "#/infra/logger";
 import { getPathDetails } from "#/shared/utils";
 
 const { __dirname } = getPathDetails(import.meta.url);
 
 const specFile = join(
   __dirname,
-  "../core/documentation/v1/generated/api-spec.json",
+  "../adapters/http/documentation/v1/generated/api-spec.json",
 );
-const specDir = join(__dirname, "../core/documentation/v1/generated");
+const specDir = join(__dirname, "../adapters/http/documentation/v1/generated");
 const generatedTypesDir = join(__dirname, "../shared/types/api/generated");
 const outputFile = join(generatedTypesDir, "api-types.d.ts");
 const openapiCommand = `npx openapi-typescript@latest "${specFile}" --output "${outputFile}"`;

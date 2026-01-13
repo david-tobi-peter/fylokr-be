@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Container } from "typedi";
-import { AuthController } from "#/controllers";
+import { AuthController } from "#/adapters/http/controllers";
 
 const controller = Container.get(AuthController);
 

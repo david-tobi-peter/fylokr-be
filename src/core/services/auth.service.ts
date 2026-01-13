@@ -1,9 +1,9 @@
 import { Service } from "typedi";
 import bcrypt from "bcrypt";
-import { userRepository } from "#/postgres/repositories";
+import { userRepository } from "#/infra/database/postgres/repositories";
 import type { SignUpRequestType, SignUpResponseType } from "#/shared/types/api";
-import { InternalServerError, ResourceConflictError } from "#/errors";
-import { jwtSecurity } from "#/security";
+import { InternalServerError, ResourceConflictError } from "#/core/errors";
+import { jwtSecurity } from "#/infra/security";
 import { TokenCategoryEnum, TTLUnit } from "#/shared/enums";
 
 @Service()

@@ -2,7 +2,7 @@ import type { Response } from "express";
 import { QueryFailedError } from "typeorm";
 import { AppError, DatabaseError, InternalServerError } from "./app.error.js";
 import config from "#/config";
-import { Logger } from "#/logger";
+import { Logger } from "#/infra/logger";
 
 export class ErrorHandler {
   /**

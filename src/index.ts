@@ -1,10 +1,13 @@
 import "reflect-metadata";
 import type { Express } from "express";
-import { closeDatabase, initializeDatabase } from "#/postgres/config";
-import { RouteManager } from "#/routes";
+import {
+  closeDatabase,
+  initializeDatabase,
+} from "#/infra/database/postgres/config";
+import { RouteManager } from "#/adapters/http/routes";
 import config from "#/config";
 import http from "http";
-import { Logger } from "#/logger";
+import { Logger } from "#/infra/logger";
 import express from "express";
 
 const app: Express = express();

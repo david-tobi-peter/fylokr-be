@@ -1,26 +1,27 @@
 # Fylokr
 
-Fylokr is a modern, high performance file hosting and sharing application built with TypeScript and Node.js.
+Fylokr is a modern, high-performance file hosting and sharing application built with TypeScript and Node.js.
 
 ## 🏗️ Architecture & Branching
 
 The `main` branch serves as the architectural foundation of the application. It defines the core patterns, directory structure, and infrastructure setup to ensure scalability and maintainability.
 
-### Project Structure (Clean Architecture)
+### Project Structure
 
-- `src/config`: Application configuration and environment variable management
-- `src/core`: Core business logic and application orchestration.
-  - `controllers`: HTTP request handlers.
-  - `decorators`: Custom TypeScript decorators for cross-cutting concerns.
+- `src/adapters/http`: Entry points for the application.
+  - `controllers`: HTTP request handlers (uses `typedi` for dependency injection).
+  - `decorators`: Custom decorators (e.g., `@Controller` for error handling).
   - `documentation`: OpenAPI/Swagger specifications and YAML components.
-  - `errors`: Standardized application error handling.
   - `middlewares`: Express.js interceptors and security middlewares.
+  - `routes`: API route definitions and versioning.
+- `src/core`: Pure business logic and application orchestration.
+  - `errors`: Standardized application error handling.
   - `services`: Encapsulated business rules and logic.
 - `src/infra`: Infrastructure and external service integrations.
-  - `database`: PostgreSQL configuration, TypeORM entities, migrations and redis setup
+  - `database`: PostgreSQL configuration, TypeORM entities, and migrations.
   - `logger`: Centralized logging service (Winston).
-  - `security`: Cryptographic utilities and token management.
+  - `security`: Cryptographic utilities and JWT management.
   - `storage`: File persistence strategy implementation.
-- `src/routes`: API route definitions and versioning.
+- `src/config`: Application configuration and environment variable management.
 - `src/shared`: Ubiquitous types, interfaces, constants, and utilities.
 - `src/scripts`: Maintenance and utility scripts (e.g., migration generation).

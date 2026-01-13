@@ -2,7 +2,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 import type { Request, Response, NextFunction } from "express";
 import authRouter from "./auth.routes.js";
-import { openapiSpec } from "#/documentation";
+import { openapiSpec } from "#/adapters/http/documentation";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { getOrmConfig } from "./typeorm.config.js";
-import { Logger } from "#/logger";
+import { Logger } from "#/infra/logger";
 
 export const AppDataSource = new DataSource(getOrmConfig());
 

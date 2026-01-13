@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { Container, Service } from "typedi";
 import type { SignUpRequestType } from "#/shared/types/api";
-import { AuthService } from "#/services";
-import { Controller } from "#/decorators";
+import { AuthService } from "#/core/services";
+import { Controller } from "#/adapters/http/decorators";
 
 @Service()
 @Controller()

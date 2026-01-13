@@ -3,7 +3,10 @@ import type { Application, NextFunction, Response } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { handleErrorResponse, handleSuccessResponse } from "#/middlewares";
+import {
+  handleErrorResponse,
+  handleSuccessResponse,
+} from "#/adapters/http/middlewares";
 import v1Router from "./v1/index.js";
 import rootRouter from "./root.route.js";
 import { ERROR_STATUS_CODES } from "#/shared/consts";

@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { Container, Service } from "typedi";
-import { Controller } from "#/decorators";
-import { HealthCheckService } from "#/services";
+import { Controller } from "#/adapters/http/decorators";
+import { HealthCheckService } from "#/core/services";
 
 @Service()
 @Controller()

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ErrorHandler } from "#/errors";
+import { ErrorHandler } from "#/core/errors";
 import type { Response } from "express";
 
 export default function Controller() {
