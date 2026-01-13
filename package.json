@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && tsc-alias && npm run copy:assets",
+    "copy:assets": "copyfiles -u 1 \"src/**/*.yml\" dist",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "prepare": "husky",
@@ -16,71 +17,6 @@
     "*.{ts,tsx}": [
       "eslint --fix",
       "prettier --write"
-    ]
-  },
-  "imports": {
-    "#/*": [
-      "dist/*"
-    ],
-    "#/config": [
-      "./dist/config/index.js"
-    ],
-    "#/controllers": [
-      "./dist/core/controllers/index.js"
-    ],
-    "#/decorators": [
-      "./dist/core/decorators/index.js"
-    ],
-    "#/documentation": [
-      "./dist/core/documentation/v1/index.js"
-    ],
-    "#/errors": [
-      "./dist/core/errors/index.js"
-    ],
-    "#/logger": [
-      "./dist/infra/logger/index.js"
-    ],
-    "#/middlewares": [
-      "./dist/core/middlewares/index.js"
-    ],
-    "#/routes": [
-      "./dist/routes/index.js"
-    ],
-    "#/postgres/config": [
-      "dist/infra/database/postgres/config/index.js"
-    ],
-    "#/postgres/entities": [
-      "dist/infra/database/postgres/entities/index.js"
-    ],
-    "#/postgres/migrations": [
-      "dist/infra/database/postgres/migrations/index.js"
-    ],
-    "#/postgres/repositories": [
-      "dist/infra/database/postgres/repositories/index.js"
-    ],
-    "#/security": [
-      "dist/infra/security/index.js"
-    ],
-    "#/services": [
-      "dist/core/services/index.js"
-    ],
-    "#/shared/consts": [
-      "dist/shared/consts/index.js"
-    ],
-    "#/shared/enums": [
-      "dist/shared/enums/index.js"
-    ],
-    "#/shared/interfaces": [
-      "dist/shared/interfaces/index.js"
-    ],
-    "#/shared/types/api": [
-      "dist/shared/types/api/index.js"
-    ],
-    "#/shared/types/common": [
-      "dist/shared/types/common/index.js"
-    ],
-    "#/shared/utils": [
-      "dist/shared/utils/index.js"
     ]
   },
   "keywords": [],
@@ -99,6 +35,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/winston": "^2.4.4",
+    "copyfiles": "^2.4.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -110,6 +47,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typedi": "^0.10.0",
     "typescript": "^5.9.3",
@@ -125,6 +63,7 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.16.3",
     "typeorm": "^0.3.28",
+    "uuidv7": "^1.1.0",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
   }

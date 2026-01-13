@@ -3,11 +3,20 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   PrimaryColumn,
+  BeforeInsert,
 } from "typeorm";
+import { uuidv7 } from "uuidv7";
 
 export abstract class BaseEntity {
-  @PrimaryColumn("uuid", { default: () => "uuid_generate_v7()" })
+  @PrimaryColumn("uuid")
   id!: string;
+
+  @BeforeInsert()
+  private generateId(): void {
+    if (!this.id) {
+      this.id = uuidv7();
+    }
+  }
 
   @CreateDateColumn({
     type: "timestamptz",
