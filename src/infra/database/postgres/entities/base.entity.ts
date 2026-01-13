@@ -2,11 +2,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from "typeorm";
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryColumn("uuid", { default: () => "uuid_generate_v7()" })
   id!: string;
 
   @CreateDateColumn({

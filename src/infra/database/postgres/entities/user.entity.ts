@@ -3,15 +3,19 @@ import { BaseEntity } from "./base.entity.js";
 
 @Entity("users")
 export class UserEntity extends BaseEntity {
-  @Column({ type: "varchar", length: 255, unique: true })
+  @Column({ type: "citext", unique: true, nullable: false })
   username!: string;
 
-  @Column({ type: "varchar", length: 255 })
-  password!: string;
+  @Column({ type: "bytea", nullable: false, name: "hashed_password" })
+  hashedPassword!: string;
 
-  @Column({ type: "varchar", length: 255, nullable: true })
-  email!: string | null;
+  @Column({ type: "citext", unique: true, nullable: false })
+  email!: string;
 
-  @Column({ type: "simple-array", nullable: true })
-  recoveryCodes!: string[] | null;
+  @Column({
+    type: "simple-array",
+    nullable: true,
+    name: "hashed_recovery_codes",
+  })
+  hashedRecoveryCodes!: string[] | null;
 }

@@ -22,7 +22,7 @@ export class AuthService {
 
     const newUser = await userRepository.createRecord({
       username: data.username,
-      password: hashedPassword,
+      hashedPassword,
       ...(data.email && { email: data.email }),
     });
 
