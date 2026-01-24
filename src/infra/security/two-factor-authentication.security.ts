@@ -5,7 +5,7 @@ import config from "#/config";
 import { Service } from "typedi";
 
 @Service()
-export class AuthenticatorService {
+export class TwoFactorAuthenticationSecurity {
   private masterKey = config.authenticator.secret;
   private totp: TOTP;
 
@@ -62,9 +62,10 @@ export class AuthenticatorService {
     code: string;
   }): Promise<boolean> {
     const normalizedCode = options.code.replace(/\s+/g, "");
-    const secret = this.generateSecret(options);
 
-    const verifiedCode = await this.totp.verify(normalizedCode, { secret });
+    const verifiedCode = await this.totp.verify(normalizedCode, {
+      secret: this.masterKey,
+    });
 
     return verifiedCode.valid;
   }

@@ -26,4 +26,12 @@ export class UserEntity extends BaseEntity {
     name: "hashed_recovery_codes",
   })
   hashedRecoveryCodes!: string[] | null;
+
+  @Column({
+    type: "boolean",
+    default: false,
+    nullable: false,
+    name: "is_2fa_enabled",
+  })
+  is2faEnabled!: boolean;
 }

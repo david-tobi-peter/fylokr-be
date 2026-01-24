@@ -35,7 +35,7 @@ const options = {
         verificationToken: {
           type: "apiKey",
           in: "header",
-          name: "Authorization",
+          name: "x-verification-token",
         },
       },
       ...sharedComponents,
