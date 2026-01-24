@@ -1,26 +1,29 @@
-import { createHash } from "crypto";
+import { createHash } from "node:crypto";
 import { UAParser } from "ua-parser-js";
 
-export interface DeviceInfo {
-  browserName: string;
-  deviceType: string;
-  deviceCPU: string;
-  deviceModel: string;
+export interface ClientHeuristic {
+  browser: string;
+  browserMajor: string;
+  os: string;
+  osVersion: string;
+  cpuArch: string;
 }
 
-class DeviceFingerprint {
+class ClientHeuristicFingerprint {
   /**
    * @param {string} userAgent
-   * @returns {DeviceInfo}
+   * @returns {ClientHeuristic}
    */
-  private generate(userAgent: string): DeviceInfo {
-    const { browser, cpu, device } = UAParser(userAgent);
+  private extract(userAgent: string): ClientHeuristic {
+    const parser = new UAParser(userAgent);
+    const { browser, os, cpu } = parser.getResult();
 
     return {
-      browserName: browser.name || "Unknown",
-      deviceType: device.type || "Unknown",
-      deviceCPU: cpu.architecture || "Unknown",
-      deviceModel: device.model || "Unknown",
+      browser: browser.name ?? "unknown",
+      browserMajor: browser.major ?? "unknown",
+      os: os.name ?? "unknown",
+      osVersion: os.version ?? "unknown",
+      cpuArch: cpu.architecture ?? "unknown",
     };
   }
 
@@ -29,14 +32,18 @@ class DeviceFingerprint {
    * @returns {string}
    */
   public generateHash(userAgent: string): string {
-    const deviceInfo = this.generate(userAgent);
-    const fingerprint = `${deviceInfo.deviceType}:${deviceInfo.deviceCPU}:${deviceInfo.deviceModel}`;
+    const heuristic = this.extract(userAgent);
 
-    return createHash("sha256")
-      .update(fingerprint)
-      .digest("hex")
-      .substring(0, 16);
+    const material = [
+      heuristic.browser,
+      heuristic.browserMajor,
+      heuristic.os,
+      heuristic.osVersion,
+      heuristic.cpuArch,
+    ].join("|");
+
+    return createHash("sha256").update(material).digest("hex").slice(0, 16);
   }
 }
 
-export const fingerprintSecurity = new DeviceFingerprint();
+export const clientHeuristicFingerprint = new ClientHeuristicFingerprint();

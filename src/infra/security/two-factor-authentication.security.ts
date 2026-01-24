@@ -21,12 +21,12 @@ export class AuthenticatorService {
   /**
    * @param {Object} options
    * @param {string} options.id
-   * @param {string} options.email
+   * @param {string} options.username
    * @returns {string}
    */
-  generateSecret(options: { id: string; email: string }): string {
+  generateSecret(options: { id: string; username: string }): string {
     const hmac = crypto.createHmac("sha256", this.masterKey);
-    hmac.update(`${config.app.environment}:${options.id}:${options.email}`);
+    hmac.update(`${config.app.environment}:${options.id}:${options.username}`);
     const digest = hmac.digest();
 
     return base32Encode(digest, "RFC4648", { padding: false });
@@ -35,30 +35,30 @@ export class AuthenticatorService {
   /**
    * @param {Object} options
    * @param {string} options.id
-   * @param {string} options.email
+   * @param {string} options.username
    * @returns {string}
    */
-  generateQRUri(options: { id: string; email: string }): string {
+  generateQRUri(options: { id: string; username: string }): string {
     const secret = this.generateSecret(options);
     const issuer = `Fylokr:${config.app.environment}`;
 
     return this.totp.toURI({
       secret,
       issuer,
-      label: options.email,
+      label: options.username,
     });
   }
 
   /**
    * @param {Object} options
    * @param {string} options.id
-   * @param {string} options.email
+   * @param {string} options.username
    * @param {string} options.code
    * @returns {Promise<boolean>}
    */
   async isCodeVerified(options: {
     id: string;
-    email: string;
+    username: string;
     code: string;
   }): Promise<boolean> {
     const normalizedCode = options.code.replace(/\s+/g, "");

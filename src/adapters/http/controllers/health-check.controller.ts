@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { Request, Response } from "express";
 import { Container, Service } from "typedi";
 import { Controller } from "#/adapters/http/decorators";
 import { HealthCheckService } from "#/core/services";
@@ -12,7 +12,7 @@ export class HealthCheckController {
     this.healthCheckService = Container.get(HealthCheckService);
   }
 
-  async checkServerHealth(res: Response) {
+  async checkServerHealth(_req: Request, res: Response) {
     const result = await this.healthCheckService.serverHealth();
     res.ok(result);
   }

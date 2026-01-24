@@ -1,6 +1,6 @@
 import { DatabaseError, UnauthorizedError } from "#/core/errors";
 import { Logger } from "#/infra/logger";
-import { AuthCacheService } from "#/infra/cache";
+import { authCacheService } from "#/infra/cache";
 import { RedisCoreServiceInstance } from "#/infra/database/redis";
 import { Service } from "typedi";
 import { userRepository } from "#/infra/database/postgres/repositories";
@@ -11,7 +11,6 @@ export class BruteForceProtectionService {
     private readonly MAX_FAILURES = 6,
     private readonly BASE_COOLDOWN_SECONDS = 30,
     private readonly FAIL_WINDOW = 30 * Math.pow(2, 5) + 300, // Max cooldown + 5min buffer = 1260s (21 min)
-    private authCacheService: AuthCacheService = new AuthCacheService(),
   ) {}
 
   /**
@@ -126,11 +125,11 @@ export class BruteForceProtectionService {
       data: { isActive: false },
     });
 
-    await this.authCacheService.invalidateCachedAuthValue({
+    await authCacheService.invalidateCachedAuthValue({
       identifier: id,
       category: "brute-force-protection",
     });
-    await this.authCacheService.logoutAllSessions(id);
+    await authCacheService.logoutAllSessions(id);
 
     await RedisCoreServiceInstance.delete(this.failKey(id));
     await RedisCoreServiceInstance.delete(this.cooldownKey(id));

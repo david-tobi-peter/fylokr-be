@@ -1,10 +1,10 @@
 import { IsNull } from "typeorm";
 
 import type { NextFunction, Response, Request } from "express";
-import { AuthCacheService } from "#/infra/cache";
+import { authCacheService } from "#/infra/cache";
 import { ERROR_STATUS_CODES, ERROR_TYPE_DEFAULTS } from "#/shared/consts";
 import { ERROR_TYPE_ENUM, TokenCategoryEnum, TTLUnit } from "#/shared/enums";
-import { fingerprintSecurity, jwtSecurity } from "#/infra/security";
+import { clientHeuristicFingerprint, jwtSecurity } from "#/infra/security";
 import type { ILoginPayload } from "#/shared/interfaces";
 import { userRepository } from "#/infra/database/postgres/repositories";
 import { JwtTokenError } from "#/core/errors";
@@ -20,8 +20,6 @@ export async function userAuthentication(
     if (response.headersSent) {
       return;
     }
-
-    const authCacheService = new AuthCacheService();
 
     function extractAuthorizationToken(req: Request): string | undefined {
       const { authorization } = req.headers;
@@ -61,8 +59,19 @@ export async function userAuthentication(
         });
     }
 
-    const userAgent = request.headers["user-agent"] || "unknown";
-    const fingerprintHash = fingerprintSecurity.generateHash(userAgent);
+    const userAgent = request.headers["user-agent"];
+    if (!userAgent) {
+      return response
+        .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+        .json({
+          error: {
+            message: "Unauthorized - User agent not found",
+            type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+          },
+        });
+    }
+
+    const fingerprintHash = clientHeuristicFingerprint.generateHash(userAgent);
 
     const isCachedUser = await authCacheService.isLoginSessionValid({
       identifier: id,

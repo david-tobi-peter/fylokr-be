@@ -5,7 +5,7 @@ import { Service } from "typedi";
 type AuthValueCategory = "brute-force-protection" | "verification";
 
 @Service()
-export class AuthCacheService {
+class AuthCacheService {
   /**
    * @param {object} options
    * @param {string} options.identifier
@@ -142,3 +142,5 @@ export class AuthCacheService {
     await RedisCoreServiceInstance.delete(key);
   }
 }
+
+export const authCacheService = new AuthCacheService();

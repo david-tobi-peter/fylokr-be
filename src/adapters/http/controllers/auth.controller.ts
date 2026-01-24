@@ -3,6 +3,7 @@ import { Container, Service } from "typedi";
 import type { SignUpRequestType } from "#/shared/types/api";
 import { AuthService } from "#/core/services";
 import { Controller } from "#/adapters/http/decorators";
+import { BadRequestError, UserAgentNotFoundError } from "#/core/errors";
 
 @Service()
 @Controller()
@@ -16,10 +17,16 @@ export class AuthController {
     const payload: SignUpRequestType = req.body;
 
     if (payload.password !== payload.confirmPassword) {
-      throw new Error("Passwords do not match");
+      throw new BadRequestError("Passwords do not match");
     }
 
-    const result = await this.authService.signUp(payload);
+    const userAgent = req.headers["user-agent"];
+
+    if (!userAgent) {
+      throw new UserAgentNotFoundError("Browser agent not found");
+    }
+
+    const result = await this.authService.signUp(payload, userAgent);
     res.created(result);
   }
 }

@@ -9,11 +9,16 @@ export class UserEntity extends BaseEntity {
   @Column({ type: "bytea", nullable: false, name: "hashed_password" })
   hashedPassword!: string;
 
+  @Column({
+    type: "boolean",
+    default: true,
+    nullable: false,
+    name: "is_active",
+  })
+  isActive!: boolean;
+
   @Column({ type: "citext", unique: true, nullable: false })
   email!: string;
-
-  @Column({ type: "boolean", default: true, nullable: false })
-  isActive!: boolean;
 
   @Column({
     type: "simple-array",

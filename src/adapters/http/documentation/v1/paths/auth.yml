@@ -25,16 +25,6 @@ paths:
                   type: string
                   description: Must match password
                   example: "Montana!!@89"
-                email:
-                  type: string
-                  description: Optional admin email
-                  format: email
-                  example: "admin@example.com"
-                code:
-                  type: string
-                  description: Optional 2FA code (6 digits)
-                  pattern: "^[0-9]{6}$"
-                  example: "123456"
               required: [username, password, confirmPassword]
       responses:
         201:

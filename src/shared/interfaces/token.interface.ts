@@ -14,6 +14,6 @@ export interface ILoginPayload {
 }
 
 export interface ISignupPayload {
-  email: string;
+  id: string;
   tokenCategory: typeof TokenCategoryEnum.SIGNUP;
 }

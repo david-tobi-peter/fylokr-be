@@ -1,3 +1,4 @@
+import { ConfigurationError } from "#/core/errors";
 import { config } from "dotenv";
 
 config({ path: ".env" });
@@ -36,7 +37,9 @@ export function deepFreeze<T extends object>(obj: T): DeepReadonly<T> {
 function getRequiredEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`);
+    throw new ConfigurationError(
+      `Missing required environment variable: ${key}`,
+    );
   }
   return value;
 }

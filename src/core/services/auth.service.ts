@@ -3,12 +3,16 @@ import bcrypt from "bcrypt";
 import { userRepository } from "#/infra/database/postgres/repositories";
 import type { SignUpRequestType, SignUpResponseType } from "#/shared/types/api";
 import { InternalServerError, ResourceConflictError } from "#/core/errors";
-import { jwtSecurity } from "#/infra/security";
+import { clientHeuristicFingerprint, jwtSecurity } from "#/infra/security";
 import { TokenCategoryEnum, TTLUnit } from "#/shared/enums";
+import { authCacheService } from "#/infra/cache";
 
 @Service()
 export class AuthService {
-  async signUp(data: SignUpRequestType): Promise<SignUpResponseType> {
+  async signUp(
+    data: SignUpRequestType,
+    userAgent: string,
+  ): Promise<SignUpResponseType> {
     const userExists = await userRepository.findOne({
       where: { username: data.username },
       withDeleted: true,
@@ -24,7 +28,6 @@ export class AuthService {
       data: {
         username: data.username,
         hashedPassword,
-        ...(data.email && { email: data.email }),
       },
     });
 
@@ -33,6 +36,15 @@ export class AuthService {
       { id: newUser.id, tokenCategory: TokenCategoryEnum.LOGIN },
       tokenTTL,
     );
+
+    const fingerprintHash = clientHeuristicFingerprint.generateHash(userAgent);
+
+    await authCacheService.cacheLoginSession({
+      identifier: newUser.id,
+      token,
+      fingerprintHash,
+      ttlSeconds: tokenTTL,
+    });
 
     if (newUser) {
       return {

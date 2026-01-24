@@ -169,6 +169,20 @@ export class FileNotFoundError extends AppError {
 }
 
 @Service()
+export class ConfigurationError extends AppError {
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.CONFIGURATION_ERROR, cause);
+  }
+}
+
+@Service()
+export class UserAgentNotFoundError extends AppError {
+  constructor(cause?: string | Error) {
+    super(ERROR_TYPE_ENUM.USER_AGENT_NOT_FOUND, cause);
+  }
+}
+
+@Service()
 export class DatabaseError extends AppError {
   constructor(cause?: string | Error) {
     super(ERROR_TYPE_ENUM.DATABASE_ERROR, cause);

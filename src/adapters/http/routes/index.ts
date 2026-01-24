@@ -1,3 +1,4 @@
+import path from "node:path";
 import { getPathDetails } from "#/shared/utils";
 import type { Application, NextFunction, Response } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
@@ -13,6 +14,10 @@ import { ERROR_STATUS_CODES } from "#/shared/consts";
 import { ERROR_TYPE_ENUM } from "#/shared/enums";
 
 const { __dirname } = getPathDetails(import.meta.url);
+const apiSpec = path.resolve(
+  __dirname,
+  "../../../adapters/http/documentation/v1/generated/api-spec.json",
+);
 
 /**
  * @class RouteManager
@@ -30,11 +35,13 @@ export class RouteManager {
     );
 
     app.use(cors());
+    app.use(handleSuccessResponse);
+    app.use(handleErrorResponse);
 
     app.use(
       "/v1",
       apiValidation({
-        apiSpec: `${__dirname}/../core/documentation/v1/generated/api-spec.json`,
+        apiSpec,
         validateRequests: true,
         validateResponses: true,
         ignorePaths: /\/documentation/,
@@ -52,9 +59,6 @@ export class RouteManager {
           });
       },
     );
-
-    app.use(handleSuccessResponse);
-    app.use(handleErrorResponse);
 
     app.use("/", rootRouter);
     app.use("/v1", v1Router);

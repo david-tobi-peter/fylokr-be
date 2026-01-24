@@ -9,6 +9,8 @@ export const ERROR_STATUS_CODES: Record<ERROR_TYPE_ENUM, number> = {
   [ERROR_TYPE_ENUM.REQUEST_TIMEOUT]: 408,
   [ERROR_TYPE_ENUM.RESOURCE_CONFLICT]: 409,
   [ERROR_TYPE_ENUM.VALIDATION_ERROR]: 422,
+  [ERROR_TYPE_ENUM.CONFIGURATION_ERROR]: 500,
+  [ERROR_TYPE_ENUM.USER_AGENT_NOT_FOUND]: 400,
   [ERROR_TYPE_ENUM.DATABASE_ERROR]: 500,
   [ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR]: 500,
   [ERROR_TYPE_ENUM.SERVICE_UNAVAILABLE]: 503,
@@ -27,6 +29,8 @@ export const ERROR_TYPE_DEFAULTS: { [key in ERROR_TYPE_ENUM]: string } = {
   [ERROR_TYPE_ENUM.BAD_REQUEST]: "The request was missing required parameters.",
   [ERROR_TYPE_ENUM.NOT_FOUND]: "The requested resource could not be found.",
   [ERROR_TYPE_ENUM.FILE_NOT_FOUND]: "File does not exist",
+  [ERROR_TYPE_ENUM.CONFIGURATION_ERROR]: "Configuration error occurred.",
+  [ERROR_TYPE_ENUM.USER_AGENT_NOT_FOUND]: "User agent header missing.",
   [ERROR_TYPE_ENUM.DATABASE_ERROR]: "A database related error.",
   [ERROR_TYPE_ENUM.UNAUTHORIZED]:
     "You do not have the necessary permissions to carry out this operation.",
