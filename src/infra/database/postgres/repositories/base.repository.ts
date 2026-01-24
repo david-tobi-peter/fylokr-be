@@ -111,8 +111,8 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
 
     if (!entity) return null;
 
-    Object.keys(data).forEach((key) => {
-      if (Object.prototype.hasOwnProperty.call(entity, key)) {
+    Object.keys(entity).forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (entity as any)[key] = (data as any)[key];
       }
