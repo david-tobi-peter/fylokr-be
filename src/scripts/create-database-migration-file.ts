@@ -8,17 +8,15 @@ if (!migrationName) {
   process.exit(1);
 }
 
-const dataSourcePath =
-  "src/infra/database/postgres/config/datasource.config.ts";
 const migrationsDir = "src/infra/database/postgres/migrations";
 const typeormCli = "./node_modules/typeorm/cli.js";
 
-const command = `npx tsx ${typeormCli} migration:generate -d ${dataSourcePath} ${path.join(migrationsDir, migrationName)}`;
+const command = `npx tsx ${typeormCli} migration:create ${path.join(migrationsDir, migrationName)}`;
 
 try {
-  console.log(`Generating migration: ${migrationName}...`);
+  console.log(`Creating migration file: ${migrationName}...`);
   execSync(command, { stdio: "inherit" });
 } catch (error) {
-  console.error(`Failed to generate migration: ${error}`);
+  console.error(`Failed to create migration file: ${error}`);
   process.exit(1);
 }

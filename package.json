@@ -11,7 +11,7 @@
     "dev": "tsx watch src/index.ts",
     "prepare": "husky",
     "generate:api-spec": "tsx src/scripts/generate-api-spec.ts",
-    "migration:generate": "tsx src/scripts/generate-database-migration-file.ts"
+    "migration:create": "tsx src/scripts/create-database-migration-file.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -64,6 +64,7 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.16.3",
     "typeorm": "^0.3.28",
+    "ua-parser-js": "^2.0.8",
     "uuidv7": "^1.1.0",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"

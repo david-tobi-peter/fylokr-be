@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response, Request } from "express";
 import type { APIResponseType } from "#/shared/types/api";
 import type { ERROR_TYPE_ENUM } from "#/shared/enums";
 

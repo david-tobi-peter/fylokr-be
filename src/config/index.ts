@@ -59,8 +59,8 @@ function getBooleanEnv(key: string, defaultValue = false): boolean {
 
 const app = {
   environment: getEnv("NODE_ENV", "development"),
-  isDev: process.env.NODE_ENV === "development",
-  isProduction: process.env.NODE_ENV === "production",
+  isDev: process.env["NODE_ENV"] === "development",
+  isProduction: process.env["NODE_ENV"] === "production",
   HOST_NAME: getRequiredEnv("HOST_NAME"),
   PORT: getNumericEnv("PORT", 3000),
   BASIC_USER: getEnv("BASIC_USER", "fylokr"),

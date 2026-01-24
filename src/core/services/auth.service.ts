@@ -21,14 +21,16 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const newUser = await userRepository.createRecord({
-      username: data.username,
-      hashedPassword,
-      ...(data.email && { email: data.email }),
+      data: {
+        username: data.username,
+        hashedPassword,
+        ...(data.email && { email: data.email }),
+      },
     });
 
     const tokenTTL = jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS);
     const token = jwtSecurity.generateToken(
-      { id: newUser.id, TokenCategoryEnum: TokenCategoryEnum.LOGIN },
+      { id: newUser.id, tokenCategory: TokenCategoryEnum.LOGIN },
       tokenTTL,
     );
 

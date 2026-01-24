@@ -10,10 +10,10 @@ export interface IJwtClaims {
 
 export interface ILoginPayload {
   id: string;
-  TokenCategoryEnum: typeof TokenCategoryEnum.LOGIN;
+  tokenCategory: typeof TokenCategoryEnum.LOGIN;
 }
 
 export interface ISignupPayload {
   email: string;
-  TokenCategoryEnum: typeof TokenCategoryEnum.SIGNUP;
+  tokenCategory: typeof TokenCategoryEnum.SIGNUP;
 }

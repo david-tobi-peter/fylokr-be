@@ -4,6 +4,38 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "noEmitOnError": true,
+    "verbatimModuleSyntax": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "sourceMap": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedSideEffectImports": true,
     "paths": {
       "#/*": [
         "src/*"
@@ -29,6 +61,12 @@
       "#/core/errors": [
         "src/core/errors/index.ts"
       ],
+      "#/core/services": [
+        "src/core/services/index.ts"
+      ],
+      "#/infra/cache": [
+        "src/infra/cache/index.ts"
+      ],
       "#/infra/logger": [
         "src/infra/logger/index.ts"
       ],
@@ -47,8 +85,8 @@
       "#/infra/database/postgres/repositories": [
         "src/infra/database/postgres/repositories/index.ts"
       ],
-      "#/core/services": [
-        "src/core/services/index.ts"
+      "#/infra/database/redis": [
+        "src/infra/database/redis/index.ts"
       ],
       "#/shared/interfaces": [
         "src/shared/interfaces/index.ts"
@@ -69,20 +107,6 @@
         "src/shared/utils/index.ts"
       ]
     },
-    "rootDir": "src",
-    "outDir": "dist",
-    "strict": true,
-    "noEmitOnError": true,
-    "verbatimModuleSyntax": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true,
-    "sourceMap": true,
-    "declaration": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
   },
   "include": [
     "src"

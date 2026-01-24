@@ -68,7 +68,7 @@ class JwtSecurity {
    * @returns {string}
    * @throws {JwtTokenError|BadRequestError}
    */
-  static getTokenJTI(token: string | undefined): string {
+  getTokenJTI(token: string | undefined): string {
     try {
       if (!token) throw new BadRequestError("No token supplied");
 

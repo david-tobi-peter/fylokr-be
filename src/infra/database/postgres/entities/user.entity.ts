@@ -12,6 +12,9 @@ export class UserEntity extends BaseEntity {
   @Column({ type: "citext", unique: true, nullable: false })
   email!: string;
 
+  @Column({ type: "boolean", default: true, nullable: false })
+  isActive!: boolean;
+
   @Column({
     type: "simple-array",
     nullable: true,
