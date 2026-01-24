@@ -111,7 +111,13 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
 
     if (!entity) return null;
 
-    Object.assign(entity, data);
+    Object.keys(data).forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(entity, key)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (entity as any)[key] = (data as any)[key];
+      }
+    });
+
     return repo.save(entity);
   }
 

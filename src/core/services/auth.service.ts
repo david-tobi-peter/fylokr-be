@@ -28,7 +28,7 @@ export class AuthService {
 
     const tokenTTL = jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS);
     const token = jwtSecurity.generateToken(
-      { id: "xxx-ddd-xxx-ddd", TokenCategoryEnum: TokenCategoryEnum.LOGIN },
+      { id: newUser.id, TokenCategoryEnum: TokenCategoryEnum.LOGIN },
       tokenTTL,
     );
 
