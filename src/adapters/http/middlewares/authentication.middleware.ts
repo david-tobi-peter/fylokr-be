@@ -11,7 +11,35 @@ import { JwtTokenError } from "#/core/errors";
 import { Logger } from "#/infra/logger";
 import config from "#/config";
 
-export async function userAuthentication(
+export function extractVerificationToken(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) {
+  if (response.headersSent) {
+    return;
+  }
+
+  const token = request.headers["x-verification-token"];
+  const verificationToken = Array.isArray(token) ? token[0] : token;
+
+  if (!token || !verificationToken) {
+    return response
+      .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+      .json({
+        error: {
+          message: "Verification token required",
+          type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+        },
+      });
+  }
+
+  request.verificationToken = verificationToken;
+
+  return next();
+}
+
+export async function authentication(
   request: Request,
   response: Response,
   next: NextFunction,

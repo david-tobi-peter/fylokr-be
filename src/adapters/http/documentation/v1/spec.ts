@@ -30,7 +30,7 @@ const options = {
         authToken: {
           type: "apiKey",
           in: "header",
-          name: "Authorization",
+          name: "authorization",
         },
         verificationToken: {
           type: "apiKey",
