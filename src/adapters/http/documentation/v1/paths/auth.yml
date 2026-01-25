@@ -104,7 +104,7 @@ paths:
 
   /auth/verify-two-factor-authentication-sign-in:
     post:
-      summary: Verify Two-Factor Authentication Sign In
+      summary: Verify Two Factor Authentication Sign In
       operationId: verifyTwoFactorAuthenticationSignIn
       tags: [Authentication]
       security:

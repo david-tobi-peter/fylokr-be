@@ -10,33 +10,69 @@ import { userRepository } from "#/infra/database/postgres/repositories";
 import { JwtTokenError } from "#/core/errors";
 import { Logger } from "#/infra/logger";
 import config from "#/config";
+import type { TokenPayloadType } from "#/shared/types/common";
 
-export function extractVerificationToken(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) {
-  if (response.headersSent) {
-    return;
-  }
+export function extractVerificationToken(expectedCategory: string) {
+  return (request: Request, response: Response, next: NextFunction) => {
+    if (response.headersSent) {
+      return;
+    }
 
-  const token = request.headers["x-verification-token"];
-  const verificationToken = Array.isArray(token) ? token[0] : token;
+    try {
+      const token = request.headers["x-verification-token"];
+      const verificationToken: string | undefined = Array.isArray(token)
+        ? token[0]
+        : token;
 
-  if (!token || !verificationToken) {
-    return response
-      .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
-      .json({
-        error: {
-          message: "Verification token required",
-          type: ERROR_TYPE_ENUM.UNAUTHORIZED,
-        },
-      });
-  }
+      if (!verificationToken) {
+        return response
+          .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+          .json({
+            error: {
+              message: "Verification token required",
+              type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+            },
+          });
+      }
 
-  request.verificationToken = verificationToken;
+      const decodedToken =
+        jwtSecurity.verifyAndDecodeToken<TokenPayloadType>(verificationToken);
 
-  return next();
+      if (decodedToken.tokenCategory !== expectedCategory) {
+        return response
+          .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+          .json({
+            error: {
+              message: "Invalid verification token type",
+              type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+            },
+          });
+      }
+
+      request.verificationToken = verificationToken;
+      return next();
+    } catch (error) {
+      if (error instanceof JwtTokenError) {
+        Logger.warn(error.toLogObject(config.logger.includeStackTrace));
+
+        return response.status(error.statusCode).json({
+          error: {
+            message: error.exposeMessage(config.error.isVerbose),
+            type: error.type,
+          },
+        });
+      }
+
+      return response
+        .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR])
+        .json({
+          error: {
+            message: "Failed to verify token",
+            type: ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR,
+          },
+        });
+    }
+  };
 }
 
 export async function authentication(
