@@ -178,6 +178,13 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {string} token
+   * @param {Object} options
+   * @param {string} options.code
+   * @param {string} userAgent
+   * @returns {Promise<VerifyTwoFactorAuthenticationSignInResponseType>}
+   */
   async verifyTwoFactorAuthenticationSignIn(
     token: string,
     options: { code: string },
@@ -258,6 +265,10 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {string} id
+   * @returns {Promise<SetupTwoFactorAuthenticationResponseType>}
+   */
   async setupTwoFactorAuthentication(
     id: string,
   ): Promise<SetupTwoFactorAuthenticationResponseType> {
@@ -295,6 +306,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {string} id
+   * @param {TwoFactorAuthenticationVerificationAndGenerateRecoveryCodesRequestType} options
+   * @returns {Promise<TwoFactorAuthenticationVerificationAndGenerateRecoveryCodesResponseType>}
+   */
   async verifyTwoFactorAuthenticationCodeAndGenerateRecoveryCodes(
     id: string,
     options: TwoFactorAuthenticationVerificationAndGenerateRecoveryCodesRequestType,
@@ -354,6 +370,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {string} id
+   * @param {string} userAgent
+   * @returns {Promise<SaveRecoveryCodesResponseType>}
+   */
   async saveGeneratedRecoveryCodes(
     id: string,
     userAgent: string,
@@ -427,6 +448,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {string} id
+   * @param {DisableTwoFactorAuthenticationRequestType} options
+   * @returns {Promise<DisableTwoFactorAuthenticationResponseType>}
+   */
   async disableTwoFactorAuthentication(
     id: string,
     options: DisableTwoFactorAuthenticationRequestType,
@@ -480,6 +506,13 @@ export class AuthService {
     };
   }
 
+  /**
+   * @param {Object} options
+   * @param {string} options.id
+   * @param {string} options.userAgent
+   * @param {boolean} options.shouldLogoutFromAllSessions
+   * @returns {Promise<LogoutResponseType>}
+   */
   async logout(options: {
     id: string;
     userAgent: string;
