@@ -108,7 +108,7 @@ paths:
       operationId: verifyTwoFactorAuthenticationSignIn
       tags: [Authentication]
       security:
-        - x-verification-token: []
+        - verificationToken: []
       requestBody:
         required: true
         content:
@@ -118,8 +118,8 @@ paths:
               properties:
                 code:
                   type: string
-                  description: 6-digit OTP code from authenticator app
-                  pattern: "^[0-9]{6}$"
+                  description: 6-character OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
                   example: "123456"
               required: [code]
       responses:
@@ -196,19 +196,13 @@ paths:
               properties:
                 code:
                   type: string
-                  description: 6-digit OTP code from authenticator app
-                  pattern: "^[0-9]{6}$"
+                  description: 6-character OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
                   example: "123456"
-                recoveryCodes:
-                  type: array
-                  items:
-                    type: string
-                  description: Recovery codes to hash and store
-                  example: ["ABC123", "DEF456", "GHI789"]
-              required: [code, recoveryCodes]
+              required: [code]
       responses:
         200:
-          description: 2FA verified, recovery codes generated
+          description: 2FA verified and recovery codes generated
           content:
             application/json:
               schema:
@@ -233,7 +227,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /auth/save-recovery-codes:
-    get:
+    post:
       summary: Save Generated Recovery Codes and Enable Two-Factor Authentication
       operationId: saveRecoveryCodes
       tags: [Authentication]
@@ -248,9 +242,17 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: string
-                    description: Success message
-                    example: "Two factor authentication enabled successfully"
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: Authentication token
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      is2faEnabled:
+                        type: boolean
+                        description: Whether 2FA is enabled for this user
+                        example: true
+                    required: [token, is2faEnabled]
                 required: [data]
         400:
           description: 2FA already enabled
@@ -279,6 +281,7 @@ paths:
                 code:
                   type: string
                   description: 6-digit OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
                   example: "123456"
               required: [code]
       responses:
@@ -305,14 +308,14 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /auth/logout:
-    get:
+    post:
       summary: Logout User
       operationId: logoutUser
       tags: [Authentication]
       security:
         - authToken: []
       parameters:
-        - name: allSessions
+        - name: shouldLogoutFromAllSessions
           in: query
           required: false
           schema:

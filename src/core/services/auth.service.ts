@@ -113,7 +113,7 @@ export class AuthService {
       },
     });
 
-    const passwordHash = user?.hashedPassword ?? DUMMY_BCRYPT_HASH;
+    const passwordHash = user?.hashedPassword.toString() ?? DUMMY_BCRYPT_HASH;
 
     const passwordValid = await bcrypt.compare(
       signInData.password,
@@ -203,12 +203,8 @@ export class AuthService {
       category: AuthCategoryEnum.TWO_FA_VERIFICATION,
     });
 
-    if (!authValue) {
+    if (!authValue || authValue !== token) {
       throw new UnauthorizedError("Verification session expired or invalid");
-    }
-
-    if (authValue !== token) {
-      throw new UnauthorizedError("Invalid or mismatched verification token");
     }
 
     const user = await userRepository.findOne({
@@ -219,12 +215,12 @@ export class AuthService {
       throw new UnauthorizedError("User does not exist");
     }
 
-    const cleanedCode = options.code.trim().replace(/\s+/g, "");
     const isValidTwoFaCode =
-      await twoFactorAuthenticationSecurity.isCodeVerified({
+      await twoFactorAuthenticationSecurity.isValidTwoFACode({
         id: user.id,
         username: user.username,
-        code: cleanedCode,
+        code: options.code,
+        hashedRecoveryCodes: user.hashedRecoveryCodes,
       });
 
     if (!isValidTwoFaCode) {
@@ -321,10 +317,11 @@ export class AuthService {
     }
 
     const isValidTwoFaCode =
-      await twoFactorAuthenticationSecurity.isCodeVerified({
+      await twoFactorAuthenticationSecurity.isValidTwoFACode({
         id: user.id,
         username: user.username,
-        code: options.code.trim().replace(/\s+/g, ""),
+        code: options.code,
+        hashedRecoveryCodes: user.hashedRecoveryCodes,
       });
 
     if (!isValidTwoFaCode) {
@@ -338,7 +335,7 @@ export class AuthService {
     }
 
     const hashedRecoveryCodes: string[] = [];
-    for (const code of options.recoveryCodes) {
+    for (const code of recoveryCodes) {
       const hashed = await bcrypt.hash(code, 10);
       hashedRecoveryCodes.push(hashed);
     }
@@ -359,6 +356,7 @@ export class AuthService {
 
   async saveGeneratedRecoveryCodes(
     id: string,
+    userAgent: string,
   ): Promise<SaveRecoveryCodesResponseType> {
     const user = await userRepository.findOne({
       where: { id, isActive: true, deletedAt: IsNull() },
@@ -405,16 +403,27 @@ export class AuthService {
       tokenCategory: TokenCategoryEnum.LOGIN,
     };
 
-    // Token is generated for potential future use (e.g., auto-login after 2FA setup)
-    jwtSecurity.generateToken(tokenPayload, tokenTTL);
+    const authToken = jwtSecurity.generateToken(tokenPayload, tokenTTL);
 
     await authCacheService.invalidateCachedAuthValue({
       identifier: user.id,
-      category: AuthCategoryEnum.BRUTE_FORCE_PROTECTION,
+      category: AuthCategoryEnum.TWO_FA_RECOVERY_CODES,
+    });
+
+    const fingerprintHash = clientHeuristicFingerprint.generateHash(userAgent);
+
+    await authCacheService.cacheLoginSession({
+      identifier: user.id,
+      token: authToken,
+      fingerprintHash,
+      ttlSeconds: tokenTTL,
     });
 
     return {
-      data: "Two factor authentication enabled successfully",
+      data: {
+        token: authToken,
+        is2faEnabled: true,
+      },
     };
   }
 
@@ -438,15 +447,14 @@ export class AuthService {
       );
     }
 
-    const cleanedCode = options.code.trim().replace(/\s+/g, "");
-    const isValid2FA = await this.isValidCode(
-      {
-        id: user.id,
-        username: user.username,
-        hashedRecoveryCodes: user.hashedRecoveryCodes,
-      },
-      cleanedCode,
-    );
+    const twoFactorAuthenticationSecurity =
+      new TwoFactorAuthenticationSecurity();
+    const isValid2FA = await twoFactorAuthenticationSecurity.isValidTwoFACode({
+      id: user.id,
+      username: user.username,
+      code: options.code,
+      hashedRecoveryCodes: user.hashedRecoveryCodes,
+    });
 
     if (!isValid2FA) {
       await bruteForceProtectionSecurity.recordFailure(user.id);
@@ -475,7 +483,7 @@ export class AuthService {
   async logout(options: {
     id: string;
     userAgent: string;
-    allSessions: boolean;
+    shouldLogoutFromAllSessions: boolean;
   }): Promise<LogoutResponseType> {
     const user = await userRepository.findOne({
       where: { id: options.id, isActive: true, deletedAt: IsNull() },
@@ -485,7 +493,7 @@ export class AuthService {
       throw new UnauthorizedError("User does not exist");
     }
 
-    if (options.allSessions) {
+    if (options.shouldLogoutFromAllSessions) {
       await authCacheService.logoutAllSessions(user.id);
       return {
         data: "Logged out successfully",
@@ -503,38 +511,5 @@ export class AuthService {
     return {
       data: "Logged out successfully",
     };
-  }
-
-  private async isValidCode(
-    user: {
-      id: string;
-      username: string;
-      hashedRecoveryCodes: string[] | null;
-    },
-    code: string,
-  ): Promise<boolean> {
-    const twoFactorAuthenticationSecurity =
-      new TwoFactorAuthenticationSecurity();
-
-    if (
-      await twoFactorAuthenticationSecurity.isCodeVerified({
-        id: user.id,
-        username: user.username,
-        code,
-      })
-    ) {
-      return true;
-    }
-
-    if (!user.hashedRecoveryCodes || user.hashedRecoveryCodes.length === 0) {
-      return false;
-    }
-
-    const comparisons: Promise<boolean>[] = user.hashedRecoveryCodes.map(
-      (hash) => bcrypt.compare(code, hash),
-    );
-
-    const results = await Promise.all(comparisons);
-    return results.some((match) => match === true);
   }
 }

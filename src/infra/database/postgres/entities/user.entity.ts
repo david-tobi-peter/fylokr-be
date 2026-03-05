@@ -21,7 +21,8 @@ export class UserEntity extends BaseEntity {
   email!: string;
 
   @Column({
-    type: "simple-array",
+    type: "text",
+    array: true,
     nullable: true,
     name: "hashed_recovery_codes",
   })

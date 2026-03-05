@@ -73,7 +73,7 @@ export type TwoFactorAuthenticationVerificationAndGenerateRecoveryCodesResponseT
 
 export type SaveRecoveryCodesResponseType = APIResponse<
   "/auth/save-recovery-codes",
-  "get",
+  "post",
   200
 >;
 
@@ -87,4 +87,4 @@ export type DisableTwoFactorAuthenticationResponseType = APIResponse<
   200
 >;
 
-export type LogoutResponseType = APIResponse<"/auth/logout", "get", 200>;
+export type LogoutResponseType = APIResponse<"/auth/logout", "post", 200>;

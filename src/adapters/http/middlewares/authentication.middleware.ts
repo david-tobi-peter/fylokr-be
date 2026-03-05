@@ -1,28 +1,26 @@
-import { IsNull } from "typeorm";
-
 import type { NextFunction, Response, Request } from "express";
 import { authCacheService } from "#/infra/cache";
 import { ERROR_STATUS_CODES, ERROR_TYPE_DEFAULTS } from "#/shared/consts";
-import { ERROR_TYPE_ENUM, TokenCategoryEnum, TTLUnit } from "#/shared/enums";
+import { ERROR_TYPE_ENUM, TokenCategoryEnum } from "#/shared/enums";
 import { clientHeuristicFingerprint, jwtSecurity } from "#/infra/security";
 import type { ILoginPayload } from "#/shared/interfaces";
-import { userRepository } from "#/infra/database/postgres/repositories";
 import { JwtTokenError } from "#/core/errors";
 import { Logger } from "#/infra/logger";
 import config from "#/config";
 import type { TokenPayloadType } from "#/shared/types/common";
 
-export function extractVerificationToken(expectedCategory: string) {
+export function extractVerificationToken(
+  expectedCategory: (typeof TokenCategoryEnum)[keyof typeof TokenCategoryEnum],
+) {
   return (request: Request, response: Response, next: NextFunction) => {
     if (response.headersSent) {
       return;
     }
 
     try {
-      const token = request.headers["x-verification-token"];
-      const verificationToken: string | undefined = Array.isArray(token)
-        ? token[0]
-        : token;
+      const verificationToken = request.headers["x-verification-token"] as
+        | string
+        | undefined;
 
       if (!verificationToken) {
         return response
@@ -142,38 +140,17 @@ export async function authentication(
       token,
       fingerprintHash,
     });
-    if (isCachedUser) {
-      request.user = { id };
-      return next();
-    }
 
-    const user = await userRepository.findOne({
-      where: { id, isActive: true, deletedAt: IsNull() },
-    });
-
-    if (!user) {
+    if (!isCachedUser) {
       return response
         .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
         .json({
           error: {
-            message: "Unauthorized - Request for access code",
+            message: "Unauthorized - Session expired or invalidated",
             type: ERROR_TYPE_ENUM.UNAUTHORIZED,
           },
         });
     }
-
-    const newToken = jwtSecurity.generateToken(
-      { id, tokenCategory: TokenCategoryEnum.LOGIN },
-      jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS),
-    );
-    const newTokenTTL = jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS);
-
-    await authCacheService.cacheLoginSession({
-      identifier: id,
-      token: newToken,
-      fingerprintHash,
-      ttlSeconds: newTokenTTL,
-    });
 
     request.user = { id };
     return next();

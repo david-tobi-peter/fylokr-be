@@ -8,7 +8,11 @@ import type {
 } from "#/shared/types/api";
 import { AuthService } from "#/core/services";
 import { Controller } from "#/adapters/http/decorators";
-import { BadRequestError, UserAgentNotFoundError } from "#/core/errors";
+import {
+  BadRequestError,
+  UnauthorizedError,
+  UserAgentNotFoundError,
+} from "#/core/errors";
 
 @Service()
 @Controller()
@@ -72,7 +76,7 @@ export class AuthController {
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new UserAgentNotFoundError("User not authenticated");
+      throw new UnauthorizedError("User not authenticated");
     }
 
     const result = await this.authService.setupTwoFactorAuthentication(userId);
@@ -88,7 +92,7 @@ export class AuthController {
       req.body;
 
     if (!userId) {
-      throw new UserAgentNotFoundError("User not authenticated");
+      throw new UnauthorizedError("User not authenticated");
     }
 
     const result =
@@ -101,12 +105,20 @@ export class AuthController {
 
   async saveGeneratedRecoveryCodes(req: Request, res: Response) {
     const userId = req.user?.id;
+    const userAgent = req.headers["user-agent"];
 
     if (!userId) {
-      throw new UserAgentNotFoundError("User not authenticated");
+      throw new UnauthorizedError("User not authenticated");
     }
 
-    const result = await this.authService.saveGeneratedRecoveryCodes(userId);
+    if (!userAgent) {
+      throw new UserAgentNotFoundError("Browser agent not found");
+    }
+
+    const result = await this.authService.saveGeneratedRecoveryCodes(
+      userId,
+      userAgent,
+    );
     res.ok(result);
   }
 
@@ -115,7 +127,7 @@ export class AuthController {
     const payload: DisableTwoFactorAuthenticationRequestType = req.body;
 
     if (!userId) {
-      throw new UserAgentNotFoundError("User not authenticated");
+      throw new UnauthorizedError("User not authenticated");
     }
 
     const result = await this.authService.disableTwoFactorAuthentication(
@@ -128,10 +140,11 @@ export class AuthController {
   async logout(req: Request, res: Response) {
     const userId = req.user?.id;
     const userAgent = req.headers["user-agent"];
-    const allSessions = req.query["allSessions"] === "true";
+    const shouldLogoutFromAllSessions =
+      req.query["shouldLogoutFromAllSessions"] === "true";
 
     if (!userId) {
-      throw new UserAgentNotFoundError("User not authenticated");
+      throw new UnauthorizedError("User not authenticated");
     }
 
     if (!userAgent) {
@@ -141,7 +154,7 @@ export class AuthController {
     const result = await this.authService.logout({
       id: userId,
       userAgent,
-      allSessions,
+      shouldLogoutFromAllSessions,
     });
     res.ok(result);
   }
