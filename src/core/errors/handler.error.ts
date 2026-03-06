@@ -1,8 +1,9 @@
 import type { Response } from "express";
 import { QueryFailedError } from "typeorm";
-import { AppError, DatabaseError, InternalServerError } from "./app.error.js";
 import config from "#/config";
 import { Logger } from "#/infra/logger";
+import { BaseError } from "./base.error.js";
+import { DatabaseError, InternalServerError } from "./system.error.js";
 
 export class ErrorHandler {
   /**
@@ -13,15 +14,10 @@ export class ErrorHandler {
   static handleError(error: unknown, res: Response): void {
     const normalizedError = this.normalizeError(error);
 
-    if (normalizedError.shouldReport()) {
-      const logObject = normalizedError.toLogObject(
-        config.logger.includeStackTrace,
-      );
-      Logger.error(`[${normalizedError.type}]`, logObject);
-    } else {
-      const logObject = normalizedError.toLogObject(false);
-      Logger.warn(`[${normalizedError.type}]`, logObject);
-    }
+    const logObject = normalizedError.toLogObject(
+      normalizedError.statusCode >= 500,
+    );
+    Logger.error(`[${normalizedError.type}]`, logObject);
 
     const apiObject = normalizedError.toApiObject(config.error.isVerbose);
     res.sendErrorResponse({
@@ -34,10 +30,10 @@ export class ErrorHandler {
    * @private
    * @static
    * @param {unknown} error
-   * @returns {AppError}
+   * @returns {BaseError}
    */
-  private static normalizeError(error: unknown): AppError {
-    if (error instanceof AppError) {
+  private static normalizeError(error: unknown): BaseError {
+    if (error instanceof BaseError) {
       return error;
     }
 
