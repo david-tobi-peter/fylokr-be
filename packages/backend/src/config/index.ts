@@ -2,10 +2,10 @@ import { config as dotenvConfig } from "dotenv";
 import { join } from "path";
 import { deepFreeze } from "@david-tobi-peter/foundation";
 import type { IFoundationConfig } from "@david-tobi-peter/foundation";
-import { UserEntity } from "#backend/entities/index.js";
+import * as entities from "#backend/entities/index.js";
+import * as migrations from "#backend/migrations/index.js";
 
-// Load .env from root
-dotenvConfig({ path: join(process.cwd(), "../../.env") });
+dotenvConfig({ path: join(process.cwd(), ".env") });
 
 function getRequiredEnv(key: string): string {
   const value = process.env[key];
@@ -47,8 +47,8 @@ const config: IFoundationConfig = {
     database: getEnv("DB_DATABASE", "fylokr"),
     username: getEnv("DB_USER", "fylokr"),
     password: getEnv("DB_PASSWORD", ""),
-    entities: [UserEntity],
-    migrations: [],
+    entities: Object.values(entities),
+    migrations: Object.values(migrations),
   },
   redis: {
     host: getRequiredEnv("REDIS_HOST"),

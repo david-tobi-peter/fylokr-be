@@ -10,8 +10,8 @@ import type { Application, NextFunction, Response } from "express";
 import { middleware as apiValidation } from "express-openapi-validator";
 import bodyParser from "body-parser";
 import cors from "cors";
-import v1Router from "./v1/index.js";
-import rootRouter from "./root.route.js";
+import { createV1Router } from "./v1/index.js";
+import { createRootRouter } from "./root.route.js";
 
 const { __dirname } = getPathDetails(import.meta.url);
 const apiSpec = path.resolve(__dirname, "../spec/v1/generated/api-spec.json");
@@ -57,7 +57,7 @@ export class RouteManager {
       },
     );
 
-    app.use("/", rootRouter);
-    app.use("/v1", v1Router);
+    app.use("/", createRootRouter());
+    app.use("/v1", createV1Router());
   }
 }

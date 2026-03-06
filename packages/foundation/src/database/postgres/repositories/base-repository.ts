@@ -8,20 +8,22 @@ import type {
   QueryRunner,
   Repository as TypeORMRepository,
 } from "typeorm";
-import { Repository } from "typeorm";
+import { getAppDataSource } from "#foundation/database/postgres/config/datasource.config.js";
 import { getUTCDateTime } from "#foundation/shared/utils/index.js";
 
 interface SoftDeletable {
   deletedAt: Date | null;
 }
 
-export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
+export class BaseRepository<T extends ObjectLiteral> {
+  constructor(private readonly target: new () => T) {}
+
   private getRepository(queryRunner?: QueryRunner): TypeORMRepository<T> {
     if (queryRunner) {
-      return queryRunner.manager.getRepository(this.target as new () => T);
+      return queryRunner.manager.getRepository(this.target);
     }
 
-    return this.manager.getRepository(this.target as new () => T);
+    return getAppDataSource().getRepository(this.target);
   }
 
   /**
@@ -34,7 +36,7 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
    * @param {QueryRunner} [options.queryRunner]
    * @returns {Promise<T | null>}
    */
-  override async findOne(options: {
+  async findOne(options: {
     where: FindOptionsWhere<T> | FindOptionsWhere<T>[];
     relations?: FindOptionsRelations<T>;
     select?: FindOptionsSelect<T>;

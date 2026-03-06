@@ -1,7 +1,6 @@
 import type { Application } from "express";
 import {
   FoundationApplication,
-  createDatabase,
   initializeDatabase,
 } from "@david-tobi-peter/foundation";
 import type {
@@ -20,7 +19,6 @@ export class App extends FoundationApplication {
   }
 
   protected async setupDependencies(): Promise<void> {
-    createDatabase(this.config.db, this.config.logger);
     await initializeDatabase();
   }
 

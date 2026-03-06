@@ -11,3 +11,4 @@ private
 .docker
 *.tsbuildinfo
 build/
+TODO.md

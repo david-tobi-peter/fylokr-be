@@ -1,19 +1,21 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import type { Request, Response, NextFunction } from "express";
-import authRouter from "./auth.routes.js";
+import { createAuthRouter } from "./auth.routes.js";
 import { openapiSpec } from "#backend/spec/v1/index.js";
 
-const router = express.Router();
+export function createV1Router(): express.Router {
+  const router = express.Router();
 
-router.use("/auth", authRouter);
+  router.use("/auth", createAuthRouter());
 
-router.use(
-  "/documentation",
-  swaggerUi.serve,
-  (req: Request, res: Response, next: NextFunction) => {
-    return swaggerUi.setup(openapiSpec)(req, res, next);
-  },
-);
+  router.use(
+    "/documentation",
+    swaggerUi.serve,
+    (req: Request, res: Response, next: NextFunction) => {
+      return swaggerUi.setup(openapiSpec)(req, res, next);
+    },
+  );
 
-export default router;
+  return router;
+}

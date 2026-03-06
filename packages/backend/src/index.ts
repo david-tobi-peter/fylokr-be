@@ -1,5 +1,7 @@
 import "reflect-metadata";
 import { Container } from "typedi";
+import express from "express";
+import { App } from "./app.js";
 import {
   closeDatabase,
   Logger,
@@ -26,9 +28,6 @@ async function bootstrap() {
       config.db as IDatabaseConfig,
       config.logger as ILoggerConfig,
     );
-
-    const express = (await import("express")).default;
-    const { App } = await import("./app.js");
 
     const expressApp = express();
     const app = new App(expressApp, config as IFoundationConfig);

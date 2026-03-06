@@ -2,7 +2,6 @@ import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
 import fs from "fs";
-import { getPathDetails } from "#foundation/shared/utils/index.js";
 
 const { combine, timestamp, printf, errors } = winston.format;
 
@@ -22,9 +21,7 @@ const logFormat = printf(
   },
 );
 
-const { __dirname } = getPathDetails(import.meta.url);
-
-const logDir = path.resolve(__dirname, "logs");
+const logDir = path.resolve(process.cwd(), "logs");
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
 
 class LoggerService {

@@ -110,21 +110,19 @@ export class BruteForceProtectionSecurity {
 
   /**
    * @param {string} id
-   * @returns {Promise<boolean>}
+   * @returns {Promise<void>}
    */
-  public async enableAccount(id: string): Promise<boolean> {
+  public async enableAccount(id: string): Promise<void> {
     await this.redis.delete(this.disabledKey(id));
     await this.redis.delete(this.failKey(id));
     await this.redis.delete(this.cooldownKey(id));
-
-    return true;
   }
 
   /**
    * @param {string} id
-   * @returns {Promise<boolean>}
+   * @returns {Promise<void>}
    */
-  public async disableAccount(id: string): Promise<boolean> {
+  public async disableAccount(id: string): Promise<void> {
     await this.authCache.invalidateCachedAuthValue({
       identifier: id,
       category: AuthCategoryEnum.BRUTE_FORCE_PROTECTION,
@@ -133,8 +131,6 @@ export class BruteForceProtectionSecurity {
 
     await this.redis.delete(this.failKey(id));
     await this.redis.delete(this.cooldownKey(id));
-
-    return true;
   }
 
   /**
