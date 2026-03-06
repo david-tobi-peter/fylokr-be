@@ -9,3 +9,5 @@ private
 **/**/logs/
 **/**/generated/
 .docker
+*.tsbuildinfo
+build/

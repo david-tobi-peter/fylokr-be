@@ -1,18 +1,7 @@
 {
   "name": "fylokr",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && tsc-alias && npm run copy:assets",
-    "copy:assets": "copyfiles -u 1 \"src/**/*.yml\" dist",
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts",
-    "prepare": "husky",
-    "generate:api-spec": "tsx src/scripts/generate-api-spec.ts",
-    "migration:create": "tsx src/scripts/create-database-migration-file.ts"
-  },
+  "description": "Fylokr Monorepo - A high performance file sharing system.",
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
@@ -24,51 +13,16 @@
   "license": "ISC",
   "type": "module",
   "private": "true",
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/bcrypt": "^6.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/js-yaml": "^4.0.9",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.0.6",
-    "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8",
-    "@types/winston": "^2.4.4",
-    "copyfiles": "^2.4.1",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^17.0.0",
-    "husky": "^9.1.7",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
     "jiti": "^2.6.1",
-    "nodemon": "^3.1.11",
-    "reflect-metadata": "^0.2.2",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.16",
-    "tsx": "^4.21.0",
-    "typedi": "^0.10.0",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.52.0"
-  },
-  "dependencies": {
-    "base32-encode": "^2.0.0",
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "express-openapi-validator": "^5.6.0",
-    "ioredis": "^5.9.2",
-    "js-yaml": "^4.1.1",
-    "jsonwebtoken": "^9.0.3",
-    "otplib": "^13.1.1",
-    "pg": "^8.16.3",
-    "typeorm": "^0.3.28",
-    "ua-parser-js": "^2.0.8",
-    "uuidv7": "^1.1.0",
-    "winston": "^3.19.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "typescript-eslint": "^8.56.1"
   }
 }
