@@ -4,7 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "strict": true,
     "noEmitOnError": true,
@@ -35,81 +35,6 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedSideEffectImports": true,
-    "paths": {
-      "#/*": [
-        "src/*"
-      ],
-      "#/adapters/http/controllers": [
-        "src/adapters/http/controllers/index.ts"
-      ],
-      "#/adapters/http/decorators": [
-        "src/adapters/http/decorators/index.ts"
-      ],
-      "#/adapters/http/documentation": [
-        "src/adapters/http/documentation/v1/index.ts"
-      ],
-      "#/adapters/http/middlewares": [
-        "src/adapters/http/middlewares/index.ts"
-      ],
-      "#/adapters/http/routes": [
-        "src/adapters/http/routes/index.ts"
-      ],
-      "#/config": [
-        "src/config/index.ts"
-      ],
-      "#/core/errors": [
-        "src/core/errors/index.ts"
-      ],
-      "#/core/services": [
-        "src/core/services/index.ts"
-      ],
-      "#/infra/cache": [
-        "src/infra/cache/index.ts"
-      ],
-      "#/infra/logger": [
-        "src/infra/logger/index.ts"
-      ],
-      "#/infra/security": [
-        "src/infra/security/index.ts"
-      ],
-      "#/infra/database/postgres/config": [
-        "src/infra/database/postgres/config/index.ts"
-      ],
-      "#/infra/database/postgres/entities": [
-        "src/infra/database/postgres/entities/index.ts"
-      ],
-      "#/infra/database/postgres/migrations": [
-        "src/infra/database/postgres/migrations/index.ts"
-      ],
-      "#/infra/database/postgres/repositories": [
-        "src/infra/database/postgres/repositories/index.ts"
-      ],
-      "#/infra/database/redis": [
-        "src/infra/database/redis/index.ts"
-      ],
-      "#/shared/interfaces": [
-        "src/shared/interfaces/index.ts"
-      ],
-      "#/shared/types/api": [
-        "src/shared/types/api/index.ts"
-      ],
-      "#/shared/types/common": [
-        "src/shared/types/common/index.ts"
-      ],
-      "#/shared/consts": [
-        "src/shared/consts/index.ts"
-      ],
-      "#/shared/enums": [
-        "src/shared/enums/index.ts"
-      ],
-      "#/shared/utils": [
-        "src/shared/utils/index.ts"
-      ]
-    },
-  },
-  "include": [
-    "src"
-  ]
+    "noPropertyAccessFromIndexSignature": true
+  }
 }

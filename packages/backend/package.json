@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "description": "Fylokr Backend Service - Core API and business logic for the Fylokr system.",
+  "version": "1.0.0",
+  "type": "module",
+  "imports": {
+    "#backend/*": "./dist/*"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "npm run copy:assets && tsc",
+    "copy:assets": "copyfiles -u 1 \"src/**/*.yml\" dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:api-spec": "tsx src/spec/v1/spec.ts",
+    "migration:create": "tsx src/scripts/create-database-migration-file.ts"
+  },
+  "dependencies": {
+    "@david-tobi-peter/foundation": "*",
+    "express": "^5.2.1",
+    "express-openapi-validator": "^5.6.0",
+    "js-yaml": "^4.1.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "typedi": "^0.10.0",
+    "ua-parser-js": "^2.0.8",
+    "uuidv7": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.13.10",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.7",
+    "copyfiles": "^2.4.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3"
+  }
+}
