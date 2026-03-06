@@ -1,17 +1,79 @@
-import { IsNull } from "typeorm";
-
 import type { NextFunction, Response, Request } from "express";
 import { authCacheService } from "#/infra/cache";
 import { ERROR_STATUS_CODES, ERROR_TYPE_DEFAULTS } from "#/shared/consts";
-import { ERROR_TYPE_ENUM, TokenCategoryEnum, TTLUnit } from "#/shared/enums";
+import { ERROR_TYPE_ENUM, TokenCategoryEnum } from "#/shared/enums";
 import { clientHeuristicFingerprint, jwtSecurity } from "#/infra/security";
 import type { ILoginPayload } from "#/shared/interfaces";
-import { userRepository } from "#/infra/database/postgres/repositories";
 import { JwtTokenError } from "#/core/errors";
 import { Logger } from "#/infra/logger";
 import config from "#/config";
+import type { TokenPayloadType } from "#/shared/types/common";
 
-export async function userAuthentication(
+export function extractVerificationToken(
+  expectedCategory: (typeof TokenCategoryEnum)[keyof typeof TokenCategoryEnum],
+) {
+  return (request: Request, response: Response, next: NextFunction) => {
+    if (response.headersSent) {
+      return;
+    }
+
+    try {
+      const verificationToken = request.headers["x-verification-token"] as
+        | string
+        | undefined;
+
+      if (!verificationToken) {
+        return response
+          .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+          .json({
+            error: {
+              message: "Verification token required",
+              type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+            },
+          });
+      }
+
+      const decodedToken =
+        jwtSecurity.verifyAndDecodeToken<TokenPayloadType>(verificationToken);
+
+      if (decodedToken.tokenCategory !== expectedCategory) {
+        return response
+          .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
+          .json({
+            error: {
+              message: "Invalid verification token type",
+              type: ERROR_TYPE_ENUM.UNAUTHORIZED,
+            },
+          });
+      }
+
+      request.verificationToken = verificationToken;
+      return next();
+    } catch (error) {
+      if (error instanceof JwtTokenError) {
+        Logger.warn(error.toLogObject(config.logger.includeStackTrace));
+
+        return response.status(error.statusCode).json({
+          error: {
+            message: error.exposeMessage(config.error.isVerbose),
+            type: error.type,
+          },
+        });
+      }
+
+      return response
+        .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR])
+        .json({
+          error: {
+            message: "Failed to verify token",
+            type: ERROR_TYPE_ENUM.INTERNAL_SERVER_ERROR,
+          },
+        });
+    }
+  };
+}
+
+export async function authentication(
   request: Request,
   response: Response,
   next: NextFunction,
@@ -78,38 +140,17 @@ export async function userAuthentication(
       token,
       fingerprintHash,
     });
-    if (isCachedUser) {
-      request.user = { id };
-      return next();
-    }
 
-    const user = await userRepository.findOne({
-      where: { id, isActive: true, deletedAt: IsNull() },
-    });
-
-    if (!user) {
+    if (!isCachedUser) {
       return response
         .status(ERROR_STATUS_CODES[ERROR_TYPE_ENUM.UNAUTHORIZED])
         .json({
           error: {
-            message: "Unauthorized - Request for access code",
+            message: "Unauthorized - Session expired or invalidated",
             type: ERROR_TYPE_ENUM.UNAUTHORIZED,
           },
         });
     }
-
-    const newToken = jwtSecurity.generateToken(
-      { id, tokenCategory: TokenCategoryEnum.LOGIN },
-      jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS),
-    );
-    const newTokenTTL = jwtSecurity.generateTokenTTL(7, TTLUnit.DAYS);
-
-    await authCacheService.cacheLoginSession({
-      identifier: id,
-      token: newToken,
-      fingerprintHash,
-      ttlSeconds: newTokenTTL,
-    });
 
     request.user = { id };
     return next();

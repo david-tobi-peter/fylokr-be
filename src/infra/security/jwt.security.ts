@@ -5,7 +5,10 @@ import jwt from "jsonwebtoken";
 import type { TokenPayloadType } from "#/shared/types/common";
 
 class JwtSecurity {
-  constructor(private secret = config.jwt.secret) {}
+  constructor(
+    private privateKey = config.jwt.privateKey,
+    private publicKey = config.jwt.publicKey,
+  ) {}
 
   /**
    * @param {TokenPayloadType} payload
@@ -27,10 +30,11 @@ class JwtSecurity {
           exp: this.getExpirationTimestamp(ttlSeconds),
           iat: Math.floor(Date.now() / 1000),
         },
-        this.secret,
+        this.privateKey,
         {
+          algorithm: "RS256",
           header: {
-            alg: "HS256",
+            alg: "RS256",
             typ: "at+jwt",
           },
         },
@@ -51,8 +55,8 @@ class JwtSecurity {
     try {
       if (!token) throw new JwtTokenError("No token supplied");
 
-      const decoded = jwt.verify(token, this.secret, {
-        algorithms: ["HS256"],
+      const decoded = jwt.verify(token, this.publicKey, {
+        algorithms: ["RS256"],
         issuer: "fylokr",
         audience: "fylokr",
         clockTolerance: 30,
@@ -72,8 +76,8 @@ class JwtSecurity {
     try {
       if (!token) throw new BadRequestError("No token supplied");
 
-      const decoded = jwt.verify(token, config.jwt.secret, {
-        algorithms: ["HS256"],
+      const decoded = jwt.verify(token, this.publicKey, {
+        algorithms: ["RS256"],
       }) as { jti: string };
 
       return decoded.jti;
@@ -91,4 +95,7 @@ class JwtSecurity {
   }
 }
 
-export const jwtSecurity = new JwtSecurity(config.jwt.secret);
+export const jwtSecurity = new JwtSecurity(
+  config.jwt.privateKey,
+  config.jwt.publicKey,
+);

@@ -21,9 +21,18 @@ export class UserEntity extends BaseEntity {
   email!: string;
 
   @Column({
-    type: "simple-array",
+    type: "text",
+    array: true,
     nullable: true,
     name: "hashed_recovery_codes",
   })
   hashedRecoveryCodes!: string[] | null;
+
+  @Column({
+    type: "boolean",
+    default: false,
+    nullable: false,
+    name: "is_2fa_enabled",
+  })
+  is2faEnabled!: boolean;
 }

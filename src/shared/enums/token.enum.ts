@@ -7,4 +7,5 @@ export enum TTLUnit {
 export const TokenCategoryEnum = {
   LOGIN: "LOGIN",
   SIGNUP: "SIGNUP",
+  TWO_FA_VERIFICATION: "TWO_FA_VERIFICATION",
 } as const;

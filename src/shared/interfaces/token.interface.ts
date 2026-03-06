@@ -17,3 +17,8 @@ export interface ISignupPayload {
   id: string;
   tokenCategory: typeof TokenCategoryEnum.SIGNUP;
 }
+
+export interface ITwoFaVerificationPayload {
+  id: string;
+  tokenCategory: typeof TokenCategoryEnum.TWO_FA_VERIFICATION;
+}

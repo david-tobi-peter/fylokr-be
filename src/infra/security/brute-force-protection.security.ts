@@ -4,9 +4,10 @@ import { authCacheService } from "#/infra/cache";
 import { RedisCoreServiceInstance } from "#/infra/database/redis";
 import { Service } from "typedi";
 import { userRepository } from "#/infra/database/postgres/repositories";
+import { AuthCategoryEnum } from "#/shared/enums";
 
 @Service()
-export class BruteForceProtectionService {
+export class BruteForceProtectionSecurity {
   constructor(
     private readonly MAX_FAILURES = 6,
     private readonly BASE_COOLDOWN_SECONDS = 30,
@@ -127,7 +128,7 @@ export class BruteForceProtectionService {
 
     await authCacheService.invalidateCachedAuthValue({
       identifier: id,
-      category: "brute-force-protection",
+      category: AuthCategoryEnum.BRUTE_FORCE_PROTECTION,
     });
     await authCacheService.logoutAllSessions(id);
 

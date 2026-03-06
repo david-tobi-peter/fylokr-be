@@ -94,7 +94,10 @@ export class RedisCoreService {
    */
   public async delete(key: string | string[]): Promise<number> {
     try {
-      return await this.client.del(...key);
+      if (Array.isArray(key)) {
+        return await this.client.del(...key);
+      }
+      return await this.client.del(key);
     } catch (err) {
       throw new DatabaseError(
         `Redis delete failed: ${err instanceof Error ? err.message : "Unknown error"}`,

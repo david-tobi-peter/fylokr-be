@@ -98,7 +98,8 @@ const redis = {
 } as const;
 
 const jwt = {
-  secret: getRequiredEnv("JWT_SECRET"),
+  privateKey: getRequiredEnv("JWT_PRIVATE_KEY"),
+  publicKey: getRequiredEnv("JWT_PUBLIC_KEY"),
 } as const;
 
 const logger = {

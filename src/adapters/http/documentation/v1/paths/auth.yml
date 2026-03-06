@@ -1,8 +1,8 @@
 paths:
   /auth/sign-up:
     post:
-      summary: Admin Sign Up
-      operationId: adminSignUp
+      summary: User Sign Up
+      operationId: userSignUp
       tags: [Authentication]
       requestBody:
         required: true
@@ -13,8 +13,8 @@ paths:
               properties:
                 username:
                   type: string
-                  description: Admin username
-                  example: "MontanaAdmin"
+                  description: User username
+                  example: "MontanaUser"
                 password:
                   type: string
                   minLength: 8
@@ -53,10 +53,10 @@ paths:
           description: Internal server error
           $ref: "#/components/responses/InternalServerError"
 
-  /auth/login:
+  /auth/sign-in:
     post:
-      summary: Admin Login
-      operationId: adminLogin
+      summary: User Sign In
+      operationId: userSignIn
       tags: [Authentication]
       requestBody:
         required: true
@@ -67,11 +67,11 @@ paths:
               properties:
                 username:
                   type: string
-                  description: Admin username
-                  example: "MontanaAdmin"
+                  description: User username
+                  example: "MontanaUser"
                 password:
                   type: string
-                  description: Admin password
+                  description: User password
                   example: "Montana!!@89"
               required: [username, password]
       responses:
@@ -87,9 +87,13 @@ paths:
                     properties:
                       token:
                         type: string
-                        description: Authentication token
+                        description: Authentication token (or 2FA verification token if 2FA enabled)
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    required: [token]
+                      is2faEnabled:
+                        type: boolean
+                        description: Whether 2FA is enabled for this user
+                        example: true
+                    required: [token, is2faEnabled]
                 required: [data]
         401:
           description: Invalid username or password
@@ -97,3 +101,245 @@ paths:
         500:
           description: Internal server error
           $ref: "#/components/responses/InternalServerError"
+
+  /auth/verify-two-factor-authentication-sign-in:
+    post:
+      summary: Verify Two Factor Authentication Sign In
+      operationId: verifyTwoFactorAuthenticationSignIn
+      tags: [Authentication]
+      security:
+        - verificationToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 6-character OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
+                  example: "123456"
+              required: [code]
+      responses:
+        200:
+          description: 2FA verified, returns auth token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    description: Authentication token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                required: [data]
+        401:
+          description: Invalid or expired 2FA code
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/setup-two-factor-authentication:
+    post:
+      summary: Setup Two-Factor Authentication
+      operationId: setupTwoFactorAuthentication
+      tags: [Authentication]
+      security:
+        - authToken: []
+      responses:
+        200:
+          description: 2FA setup data returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      qRUri:
+                        type: string
+                        description: URI for QR code to scan with authenticator app
+                        example: "otpauth://totp/Fylokr:user@example.com?secret=ABC123&issuer=Fylokr"
+                      secret:
+                        type: string
+                        description: Secret key for manual entry
+                        example: "JBSWY3DPEHPK3PXP"
+                    required: [qRUri, secret]
+                required: [data]
+        400:
+          description: 2FA already enabled
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: Unauthorized
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/verify-two-factor-authentication-and-generate-recovery-codes:
+    post:
+      summary: Verify Two-Factor Authentication Code and Generate Recovery Codes
+      operationId: verifyTwoFactorAuthenticationAndGenerateRecoveryCodes
+      tags: [Authentication]
+      security:
+        - authToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 6-character OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
+                  example: "123456"
+              required: [code]
+      responses:
+        200:
+          description: 2FA verified and recovery codes generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      recoveryCodes:
+                        type: array
+                        items:
+                          type: string
+                        description: Generated recovery codes (save these securely)
+                        example: ["ABC123", "DEF456", "GHI789", "JKL012", "MNO345", "PQR678", "STU901", "VWX234"]
+                    required: [recoveryCodes]
+                required: [data]
+        401:
+          description: Invalid or expired OTP code
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/save-recovery-codes:
+    post:
+      summary: Save Generated Recovery Codes and Enable Two-Factor Authentication
+      operationId: saveRecoveryCodes
+      tags: [Authentication]
+      security:
+        - authToken: []
+      responses:
+        200:
+          description: 2FA enabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: Authentication token
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      is2faEnabled:
+                        type: boolean
+                        description: Whether 2FA is enabled for this user
+                        example: true
+                    required: [token, is2faEnabled]
+                required: [data]
+        400:
+          description: 2FA already enabled
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: Unauthorized
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/disable-two-factor-authentication:
+    post:
+      summary: Disable Two-Factor Authentication
+      operationId: disableTwoFactorAuthentication
+      tags: [Authentication]
+      security:
+        - authToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 6-digit OTP code or recovery code
+                  pattern: "^[a-zA-Z0-9]{6}$"
+                  example: "123456"
+              required: [code]
+      responses:
+        200:
+          description: 2FA disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    description: Success message
+                    example: "Two factor authentication disabled successfully"
+                required: [data]
+        400:
+          description: 2FA not enabled
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: Invalid code
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/logout:
+    post:
+      summary: Logout User
+      operationId: logoutUser
+      tags: [Authentication]
+      security:
+        - authToken: []
+      parameters:
+        - name: shouldLogoutFromAllSessions
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: If true, logout from all sessions
+          example: false
+      responses:
+        200:
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    description: Success message
+                    example: "Logged out successfully"
+                required: [data]
+        401:
+          description: Unauthorized
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          description: Internal server error
+          $ref: "#/components/responses/InternalServerError"
+

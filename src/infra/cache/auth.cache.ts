@@ -1,8 +1,7 @@
 import { RedisCoreServiceInstance } from "#/infra/database/redis";
 import { jwtSecurity } from "#/infra/security";
 import { Service } from "typedi";
-
-type AuthValueCategory = "brute-force-protection" | "verification";
+import { AuthCategoryEnum } from "#/shared/enums";
 
 @Service()
 class AuthCacheService {
@@ -80,14 +79,14 @@ class AuthCacheService {
    * @param {object} options
    * @param {string} options.identifier
    * @param {string} options.value
-   * @param {AuthValueCategory} options.category
+   * @param {AuthCategoryEnum} options.category
    * @param {number} options.ttlSeconds
    * @returns {Promise<void>}
    */
   public async cacheAuthValue(options: {
     identifier: string;
     value: string;
-    category: AuthValueCategory;
+    category: AuthCategoryEnum;
     ttlSeconds: number;
   }): Promise<void> {
     const key = `auth:${options.category}:${options.identifier}`;
@@ -102,13 +101,13 @@ class AuthCacheService {
    * @param {object} options
    * @param {string} options.identifier
    * @param {string} options.value
-   * @param {AuthValueCategory} options.category
+   * @param {AuthCategoryEnum} options.category
    * @returns {Promise<boolean>}
    */
   public async isAuthValueCached(options: {
     identifier: string;
     value: string;
-    category: AuthValueCategory;
+    category: AuthCategoryEnum;
   }): Promise<boolean> {
     const key = `auth:${options.category}:${options.identifier}`;
     return (await RedisCoreServiceInstance.get(key)) === options.value;
@@ -117,12 +116,12 @@ class AuthCacheService {
   /**
    * @param {object} options
    * @param {string} options.identifier
-   * @param {AuthValueCategory} options.category
+   * @param {AuthCategoryEnum} options.category
    * @returns {Promise<string | null>}
    */
   public async getCachedAuthValue(options: {
     identifier: string;
-    category: AuthValueCategory;
+    category: AuthCategoryEnum;
   }): Promise<string | null> {
     const key = `auth:${options.category}:${options.identifier}`;
     return await RedisCoreServiceInstance.get(key);
@@ -131,12 +130,12 @@ class AuthCacheService {
   /**
    * @param {object} options
    * @param {string} options.identifier
-   * @param {AuthValueCategory} options.category
+   * @param {AuthCategoryEnum} options.category
    * @returns {Promise<void>}
    */
   public async invalidateCachedAuthValue(options: {
     identifier: string;
-    category: AuthValueCategory;
+    category: AuthCategoryEnum;
   }): Promise<void> {
     const key = `auth:${options.category}:${options.identifier}`;
     await RedisCoreServiceInstance.delete(key);
